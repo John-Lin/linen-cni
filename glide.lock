@@ -1,0 +1,47 @@
+hash: b104caf04ce000d54fedaab704a3259e9cdc27950a0117053b47faf88aca2b29
+updated: 2017-07-02T23:36:22.664586345+08:00
+imports:
+- name: github.com/cenkalti/hub
+  version: 7be60e186e66cd86db2d50ef2ca3778e281c87b4
+- name: github.com/cenkalti/rpc2
+  version: 44d0d95e4f529a0fe230c90d2126bd597c61148c
+  subpackages:
+  - jsonrpc
+- name: github.com/containernetworking/cni
+  version: 137b4975ecab6e1f0c24c1e3c228a50a3cfba75e
+  subpackages:
+  - pkg/invoke
+  - pkg/skel
+  - pkg/types
+  - pkg/types/020
+  - pkg/types/current
+  - pkg/version
+- name: github.com/containernetworking/plugins
+  version: f8134be6efa248f68ba18401e594fc4146a5acd3
+  subpackages:
+  - pkg/ip
+  - pkg/ipam
+  - pkg/ns
+  - pkg/utils
+  - pkg/utils/hwaddr
+- name: github.com/contiv/libovsdb
+  version: bbc744d8ddc88c6a997e600b19736055c24d87d5
+- name: github.com/coreos/go-iptables
+  version: fbb73372b87f6e89951c2b6b31470c2c9d5cfae3
+  subpackages:
+  - iptables
+- name: github.com/John-Lin/ovsdbDriver
+  version: d8a20ea48c4e8e0ed3123bafe8ba0774913d1536
+- name: github.com/Sirupsen/logrus
+  version: 7dd06bf38e1e13df288d471a57d5adbac106be9e
+- name: github.com/vishvananda/netlink
+  version: fe3b5664d23a11b52ba59bece4ff29c52772a56b
+  subpackages:
+  - nl
+- name: github.com/vishvananda/netns
+  version: 8ba1072b58e0c2a240eb5f6120165c7776c3e7b8
+- name: golang.org/x/sys
+  version: 076b546753157f758b316e59bcb51e6807c04057
+  subpackages:
+  - unix
+testImports: []
