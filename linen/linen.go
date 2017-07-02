@@ -232,6 +232,40 @@ func ensureBridge(brName string, mtu int) (*netlink.Bridge, error) {
 	return br, nil
 }
 
+func ensureOVSBridge(OVSBrName string) (*netlink.Bridge, error) {
+	var ovsDriver *ovsdbDriver.OvsDriver
+
+	// create a ovs bridge
+	ovsDriver = ovsdbDriver.NewOvsDriver(OVSBrName)
+
+	// Create an internal port in OVS
+	ovsDriver.CreatePort(OVSBrName, "internal", 0)
+	// err := ovsDriver.CreatePort(OVSBrName, "internal", 0)
+	// if err != nil {
+	// 	return fmt.Errorf("Error creating the port. Err: %v", err)
+	// }
+
+	time.Sleep(300 * time.Millisecond)
+
+	// finds a link by name and returns a pointer to the object.
+	// ovsbr, _ := netlink.LinkByName(OVSBrName)
+	ovsbrLink, err := netlink.LinkByName(OVSBrName)
+	if err != nil {
+		fmt.Printf("could not lookup link on ensureOVSBridge %q: %v", OVSBrName, err)
+		return nil, err
+	}
+
+	// enables the link device
+	netlink.LinkSetUp(ovsbrLink)
+	// if err := netlink.LinkSetUp(ovsbr); err != nil {
+	// 	return err
+	// }
+
+	ovsbr, _ := bridgeByName(OVSBrName)
+
+	return ovsbr, nil
+}
+
 func setupVeth(netns ns.NetNS, br *netlink.Bridge, ifName string, mtu int, hairpinMode bool) (*current.Interface, *current.Interface, error) {
 	contIface := &current.Interface{}
 	hostIface := &current.Interface{}
@@ -290,41 +324,30 @@ func setupBridge(n *NetConf) (*netlink.Bridge, *current.Interface, error) {
 	}, nil
 }
 
-func setupOVSBridge(n *NetConf, br *netlink.Bridge) error {
-	var ovsDriver *ovsdbDriver.OvsDriver
+func setupOVSBridge(n *NetConf) (*netlink.Bridge, error) {
+	// create ovs bridge
+	ovsbr, err := ensureOVSBridge(n.OVSBrName)
+	if err != nil {
+		return nil, err
+	}
 
-	// create a ovs bridge
-	ovsDriver = ovsdbDriver.NewOvsDriver(n.OVSBrName)
+	return ovsbr, nil
+}
 
-	// Create an internal port in OVS
-	ovsDriver.CreatePort(n.OVSBrName, "internal", 0)
-	// err := ovsDriver.CreatePort(n.OVSBrName, "internal", 0)
-	// if err != nil {
-	// 	return fmt.Errorf("Error creating the port. Err: %v", err)
-	// }
-
-	time.Sleep(300 * time.Millisecond)
-
-	// finds a link by name and returns a pointer to the object.
-	iface, _ := netlink.LinkByName(n.OVSBrName)
-	// iface, err := netlink.LinkByName(n.OVSBrName)
-	// if err != nil {
-	// 	return fmt.Errorf("could not lookup %q: %v", n.OVSBrName, err)
-	// }
-
-	// enables the link device
-	netlink.LinkSetUp(iface)
-	// if err := netlink.LinkSetUp(iface); err != nil {
-	// 	return err
-	// }
+func addOVSBridgeToBridge(n *NetConf, br *netlink.Bridge) error {
+	ovsbrLink, err := netlink.LinkByName(n.OVSBrName)
+	if err != nil {
+		fmt.Printf("could not lookup link on addOVSBridgeToBridge %q: %v", n.OVSBrName, err)
+		return err
+	}
 
 	// Adding the interface into the bridge is done by setting its master to bridge_name
 	// exec.Command("brctl", "addif", n.BrName, n.OVSBrName).Output()
-	netlink.LinkSetMaster(iface, br)
-	// if err := LinkSetMaster(n.OVSBrName, n.BrName); err != nil {
-	// 	return err
+	netlink.LinkSetMaster(ovsbrLink, br)
+	// if err := netlink.LinkSetMaster(ovsbrLink, br); err != nil {
+	// 	fmt.Printf("failed to LinkSetMaster %v\n", err)
+	// 	return nil, err
 	// }
-
 	return nil
 }
 
@@ -356,8 +379,13 @@ func cmdAdd(args *skel.CmdArgs) error {
 	if err != nil {
 		return err
 	}
+	
+	_, err = setupOVSBridge(n)
+	if err != nil {
+		return err
+	}
 
-	if err = setupOVSBridge(n, br); err != nil {
+	if err = addOVSBridgeToBridge(n, br); err != nil {
 		return err
 	}
 
