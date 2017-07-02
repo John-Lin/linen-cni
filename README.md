@@ -4,7 +4,7 @@ A CNI plugin designed for overlay networks with Open vSwitch.
 
 # Linen Configuration file
 
-``
+```
 $ tee /etc/cni/net.d/linen-cni.conf <<-'EOF'
 {
 	"name": "linen-demo-network",
