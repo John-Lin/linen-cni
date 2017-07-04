@@ -15,3 +15,5 @@ import:
   - pkg/ns
   - pkg/utils
 - package: github.com/vishvananda/netlink
+- package: github.com/Sirupsen/logrus
+  version: ~1.0.0

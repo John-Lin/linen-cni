@@ -1,5 +1,5 @@
-hash: b104caf04ce000d54fedaab704a3259e9cdc27950a0117053b47faf88aca2b29
-updated: 2017-07-02T23:36:22.664586345+08:00
+hash: aa4f873a2def94ed547c7c1537f9f967b11a24e97c765ceaf2cda3a4e0600f27
+updated: 2017-07-04T19:49:17.66343783+08:00
 imports:
 - name: github.com/cenkalti/hub
   version: 7be60e186e66cd86db2d50ef2ca3778e281c87b4
@@ -33,7 +33,7 @@ imports:
 - name: github.com/John-Lin/ovsdbDriver
   version: d8a20ea48c4e8e0ed3123bafe8ba0774913d1536
 - name: github.com/Sirupsen/logrus
-  version: 7dd06bf38e1e13df288d471a57d5adbac106be9e
+  version: 202f25545ea4cf9b191ff7f846df5d87c9382c2b
 - name: github.com/vishvananda/netlink
   version: fe3b5664d23a11b52ba59bece4ff29c52772a56b
   subpackages:
