@@ -17,6 +17,7 @@ $ tee /etc/cni/net.d/linen-cni.conf <<-'EOF'
 	"ipMasq": false,
         "mtu": 1400,
 	"hairpinMode": false,
+	"vtepIP": ["192.168.120.10", "192.168.60.5", "192.168.30.1"],
 	"ipam": {
 		"type": "host-local",
 		"subnet": "10.244.0.0/16",
