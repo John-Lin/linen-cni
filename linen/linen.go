@@ -36,21 +36,26 @@ import (
 	"github.com/vishvananda/netlink"
 
 	"github.com/John-Lin/ovsdbDriver"
+
+	log "github.com/Sirupsen/logrus"
 )
 
 const defaultBrName = "cni0"
 
 type NetConf struct {
 	types.NetConf
-	BrName       string `json:"bridge"`
-	OVSBrName    string `json:"ovsBridge"`
-	IsGW         bool   `json:"isGateway"`
-	IsDefaultGW  bool   `json:"isDefaultGateway"`
-	ForceAddress bool   `json:"forceAddress"`
-	IPMasq       bool   `json:"ipMasq"`
-	MTU          int    `json:"mtu"`
-	HairpinMode  bool   `json:"hairpinMode"`
+	BrName       string   `json:"bridge"`
+	OVSBrName    string   `json:"ovsBridge"`
+	IsGW         bool     `json:"isGateway"`
+	IsDefaultGW  bool     `json:"isDefaultGateway"`
+	ForceAddress bool     `json:"forceAddress"`
+	IPMasq       bool     `json:"ipMasq"`
+	MTU          int      `json:"mtu"`
+	HairpinMode  bool     `json:"hairpinMode"`
+	VtepIP       []string `json:"vtepIP"`
 }
+
+var ovsDriver *ovsdbDriver.OvsDriver
 
 type gwInfo struct {
 	gws               []net.IPNet
@@ -233,7 +238,6 @@ func ensureBridge(brName string, mtu int) (*netlink.Bridge, error) {
 }
 
 func ensureOVSBridge(OVSBrName string) (*netlink.Bridge, error) {
-	var ovsDriver *ovsdbDriver.OvsDriver
 
 	// create a ovs bridge
 	ovsDriver = ovsdbDriver.NewOvsDriver(OVSBrName)
@@ -334,6 +338,31 @@ func setupOVSBridge(n *NetConf) (*netlink.Bridge, error) {
 	return ovsbr, nil
 }
 
+func setupAllVTEPs(n *NetConf) error {
+	for i := 0; i < len(n.VtepIP); i++ {
+
+		// Create interface name for VTEP
+		intfName := vxlanIfName(n.VtepIP[i])
+
+		// Check if it already exists
+		isPresent, vsifName := ovsDriver.IsVtepPresent(n.VtepIP[i])
+		if !isPresent || (vsifName != intfName) {
+			// create VTEP
+			err := ovsDriver.CreateVtep(intfName, n.VtepIP[i])
+
+			log.Infof("Creating VTEP intf %s for IP %s", intfName, n.VtepIP[i])
+
+			if err != nil {
+				log.Errorf("Error creating VTEP port %s. Err: %v", intfName, err)
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func addOVSBridgeToBridge(n *NetConf, br *netlink.Bridge) error {
 	ovsbrLink, err := netlink.LinkByName(n.OVSBrName)
 	if err != nil {
@@ -379,13 +408,17 @@ func cmdAdd(args *skel.CmdArgs) error {
 	if err != nil {
 		return err
 	}
-	
+
 	_, err = setupOVSBridge(n)
 	if err != nil {
 		return err
 	}
 
 	if err = addOVSBridgeToBridge(n, br); err != nil {
+		return err
+	}
+
+	if err = setupAllVTEPs(n); err != nil {
 		return err
 	}
 
