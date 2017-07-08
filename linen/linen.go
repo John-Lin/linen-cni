@@ -109,7 +109,7 @@ func calcGateways(result *current.Result, n *NetConf) (*gwInfo, *gwInfo, error) 
 		defaultNet.Mask = net.IPMask(defaultNet.IP)
 
 		// All IPs currently refer to the container interface
-		ipc.Interface = 2
+		ipc.Interface = current.Int(2)
 
 		// If not provided, calculate the gateway address corresponding
 		// to the selected IP address
@@ -240,7 +240,7 @@ func ensureBridge(brName string, mtu int) (*netlink.Bridge, error) {
 func ensureOVSBridge(OVSBrName string) (*netlink.Bridge, error) {
 
 	// create a ovs bridge
-	ovsDriver = ovsdbDriver.NewOvsDriver(OVSBrName)
+	ovsDriver = ovsdbDriver.NewOvsDriverWithUnix(OVSBrName)
 
 	// Create an internal port in OVS
 	ovsDriver.CreatePort(OVSBrName, "internal", 0)
