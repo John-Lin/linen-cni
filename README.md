@@ -2,8 +2,19 @@
 
 A CNI plugin designed for overlay networks with Open vSwitch.
 
-# Linen Configuration file
+## Network Architecture
+Coming soon
 
+## Build
+
+```
+$ ./build.sh
+```
+
+when build succeed binary will be in the `bin` folder.
+
+## Linen Configuration file
+Here is an example for create an overlay network using OVS
 ```
 $ tee /etc/cni/net.d/linen-cni.conf <<-'EOF'
 {
@@ -29,3 +40,8 @@ $ tee /etc/cni/net.d/linen-cni.conf <<-'EOF'
 }
 EOF
 ```
+
+## Usage in Kubernetes
+1. Create Linen CNI configuration file in the `/etc/cni/net.d/linen-cni.conf` directories.
+2. Make sure that the linen binary are in the `/opt/cni/bin` directories directories.
+3. Test to create a POD/Deployment
