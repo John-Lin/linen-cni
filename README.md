@@ -1,9 +1,17 @@
 # Linen CNI plugin
 
-A CNI plugin designed for overlay networks with Open vSwitch.
+A CNI plugin designed for overlay networks with [Open vSwitch](http://openvswitch.org).
 
-## Network Architecture
-Coming soon
+# About Linen CNI plugin
+Linen provides a convenient way to easily setup networking between pods across nodes. To support multi-host overlay networking and large scale isolatio, VXLAN tunnel end point (VTEP) is used instead of GRE. Linen creates an OVS bridge and added as a port to the linux bridge.
+
+This CNI plugin implementation was inspired by the document from [Kubernetes OVS networking](https://kubernetes.io/docs/admin/ovs-networking/) and designed to meet the requirements of SDN environment.
+
+Please read [CNI](https://github.com/containernetworking/cni/blob/master/SPEC.md) for more detail on container networking.
+
+## Architecture
+
+![OVS Networking](/images/ovs-networking.png)
 
 ## Build
 
@@ -13,8 +21,8 @@ $ ./build.sh
 
 when build succeed binary will be in the `bin` folder.
 
-## Linen Configuration file
-Here is an example for create an overlay network using OVS
+## Linen Network Configuration
+Given the following network configuration:
 ```
 $ tee /etc/cni/net.d/linen-cni.conf <<-'EOF'
 {
