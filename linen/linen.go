@@ -52,7 +52,7 @@ type NetConf struct {
 	IPMasq       bool     `json:"ipMasq"`
 	MTU          int      `json:"mtu"`
 	HairpinMode  bool     `json:"hairpinMode"`
-	VtepIP       []string `json:"vtepIP"`
+	VtepIPs      []string `json:"vtepIPs"`
 }
 
 var ovsDriver *ovsdbDriver.OvsDriver
@@ -338,19 +338,19 @@ func setupOVSBridge(n *NetConf) (*netlink.Bridge, error) {
 	return ovsbr, nil
 }
 
-func setupAllVTEPs(n *NetConf) error {
-	for i := 0; i < len(n.VtepIP); i++ {
+func setupVTEPs(n *NetConf) error {
+	for i := 0; i < len(n.VtepIPs); i++ {
 
 		// Create interface name for VTEP
-		intfName := vxlanIfName(n.VtepIP[i])
+		intfName := vxlanIfName(n.VtepIPs[i])
 
 		// Check if it already exists
-		isPresent, vsifName := ovsDriver.IsVtepPresent(n.VtepIP[i])
+		isPresent, vsifName := ovsDriver.IsVtepPresent(n.VtepIPs[i])
 		if !isPresent || (vsifName != intfName) {
 			// create VTEP
-			err := ovsDriver.CreateVtep(intfName, n.VtepIP[i])
+			err := ovsDriver.CreateVtep(intfName, n.VtepIPs[i])
 
-			log.Infof("Creating VTEP intf %s for IP %s", intfName, n.VtepIP[i])
+			log.Infof("Creating VTEP intf %s for IP %s", intfName, n.VtepIPs[i])
 
 			if err != nil {
 				log.Errorf("Error creating VTEP port %s. Err: %v", intfName, err)
@@ -418,7 +418,7 @@ func cmdAdd(args *skel.CmdArgs) error {
 		return err
 	}
 
-	if err = setupAllVTEPs(n); err != nil {
+	if err = setupVTEPs(n); err != nil {
 		return err
 	}
 
