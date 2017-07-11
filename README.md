@@ -36,7 +36,7 @@ $ tee /etc/cni/net.d/linen-cni.conf <<-'EOF'
 	"ipMasq": true,
 	"mtu": 1400,
 	"hairpinMode": false,
-	"vtepIP": ["10.245.2.2", "10.245.2.3"],
+	"vtepIPs": ["10.245.2.2", "10.245.2.3"],
 	"ipam": {
 		"type": "host-local",
 		"subnet": "10.244.0.0/16",
@@ -62,7 +62,7 @@ $ tee /etc/cni/net.d/linen-cni.conf <<-'EOF'
 	"ipMasq": true,
 	"mtu": 1400,
 	"hairpinMode": false,
-	"vtepIP": ["10.245.2.2"],
+	"vtepIPs": ["10.245.2.2"],
 	"ipam": {
 		"type": "host-local",
 		"subnet": "10.244.0.0/16",
@@ -88,7 +88,7 @@ $ tee /etc/cni/net.d/linen-cni.conf <<-'EOF'
 	"ipMasq": true,
 	"mtu": 1400,
 	"hairpinMode": false,
-	"vtepIP": ["10.245.2.2"],
+	"vtepIPs": ["10.245.2.2"],
 	"ipam": {
 		"type": "host-local",
 		"subnet": "10.244.0.0/16",
@@ -105,7 +105,7 @@ EOF
 
 ### Network configuration reference
 
-Linux Bridge plugin
+For **Linux Bridge plugin** options
 - `name` (string, required): the name of the network.
 - `type` (string, required): "bridge".
 - `bridge` (string, optional): name of the bridge to use/create. Defaults to "cni0".
@@ -117,9 +117,9 @@ Linux Bridge plugin
 - `hairpinMode` (boolean, optional): set hairpin mode for interfaces on the bridge. Defaults to false.
 - `ipam` (dictionary, required): IPAM configuration to be used for this network.
 
-Open vSwitch Bridge plugin
+For **Open vSwitch Bridge plugin** options
 - `ovsBridge`(string, required): name of the ovs bridge to use/create.
-- `vtepIP` (list, optional): list of the VXLAN tunnel end points IP address
+- `vtepIPs` (array, optional): array of the VXLAN tunnel end point IP addresses
 
 ## Usage in Kubernetes
 1. Create Linen CNI configuration file in the `/etc/cni/net.d/linen-cni.conf` directories.
