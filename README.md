@@ -29,19 +29,22 @@ $ tee /etc/cni/net.d/linen-cni.conf <<-'EOF'
 	"name": "linen-demo-network",
 	"type": "linen",
 	"bridge": "kbr0",
-	"ovsBridge": "br0",
 	"isGateway": true,
 	"isDefaultGateway": true,
 	"forceAddress": false,
 	"ipMasq": true,
 	"mtu": 1400,
 	"hairpinMode": false,
-	"vtepIPs": ["10.245.2.2", "10.245.2.3"],
+    "ovs": {
+        "isMaster": true,
+        "ovsBridge": "br0",
+        "vtepIPs": ["10.245.2.2", "10.245.2.3"]
+    },
 	"ipam": {
 		"type": "host-local",
 		"subnet": "10.244.0.0/16",
 		"rangeStart": "10.244.1.10",
-			"rangeEnd": "10.244.1.150",
+		"rangeEnd": "10.244.1.150",
 		"routes": [
 			{ "dst": "0.0.0.0/0" }
 		],
@@ -55,19 +58,22 @@ $ tee /etc/cni/net.d/linen-cni.conf <<-'EOF'
 	"name": "linen-demo-network",
 	"type": "linen",
 	"bridge": "kbr0",
-	"ovsBridge": "br0",
 	"isGateway": true,
 	"isDefaultGateway": true,
 	"forceAddress": false,
 	"ipMasq": true,
 	"mtu": 1400,
 	"hairpinMode": false,
-	"vtepIPs": ["10.245.2.2"],
+	"ovs": {
+        "isMaster": true,
+        "ovsBridge": "br0",
+        "vtepIPs": ["10.245.2.2"]
+    },
 	"ipam": {
 		"type": "host-local",
 		"subnet": "10.244.0.0/16",
 		"rangeStart": "10.244.2.10",
-			"rangeEnd": "10.244.2.150",
+		"rangeEnd": "10.244.2.150",
 		"routes": [
 			{ "dst": "0.0.0.0/0" }
 		],
@@ -81,19 +87,22 @@ $ tee /etc/cni/net.d/linen-cni.conf <<-'EOF'
 	"name": "linen-demo-network",
 	"type": "linen",
 	"bridge": "kbr0",
-	"ovsBridge": "br0",
 	"isGateway": true,
 	"isDefaultGateway": true,
 	"forceAddress": false,
 	"ipMasq": true,
 	"mtu": 1400,
 	"hairpinMode": false,
-	"vtepIPs": ["10.245.2.2"],
+	"ovs": {
+		"isMaster": true,
+        "ovsBridge": "br0",
+        "vtepIPs": ["10.245.2.3"]
+    },
 	"ipam": {
 		"type": "host-local",
 		"subnet": "10.244.0.0/16",
 		"rangeStart": "10.244.3.10",
-			"rangeEnd": "10.244.3.150",
+		"rangeEnd": "10.244.3.150",
 		"routes": [
 			{ "dst": "0.0.0.0/0" }
 		],
