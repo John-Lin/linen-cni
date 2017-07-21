@@ -40,19 +40,25 @@ import (
 	log "github.com/Sirupsen/logrus"
 )
 
-const defaultBrName = "cni0"
+const defaultBrName = "kbr0"
+const defaultOVSBrName = "br0"
+
+type OVS struct {
+	IsMaster  bool     `json:"isMaster"`
+	OVSBrName string   `json:"ovsBridge"`
+	VtepIPs   []string `json:"vtepIPs"`
+}
 
 type NetConf struct {
 	types.NetConf
-	BrName       string   `json:"bridge"`
-	OVSBrName    string   `json:"ovsBridge"`
-	IsGW         bool     `json:"isGateway"`
-	IsDefaultGW  bool     `json:"isDefaultGateway"`
-	ForceAddress bool     `json:"forceAddress"`
-	IPMasq       bool     `json:"ipMasq"`
-	MTU          int      `json:"mtu"`
-	HairpinMode  bool     `json:"hairpinMode"`
-	VtepIPs      []string `json:"vtepIPs"`
+	BrName       string `json:"bridge"`
+	IsGW         bool   `json:"isGateway"`
+	IsDefaultGW  bool   `json:"isDefaultGateway"`
+	ForceAddress bool   `json:"forceAddress"`
+	IPMasq       bool   `json:"ipMasq"`
+	MTU          int    `json:"mtu"`
+	HairpinMode  bool   `json:"hairpinMode"`
+	OVS          OVS    `json:"ovs"`
 }
 
 var ovsDriver *ovsdbDriver.OvsDriver
@@ -73,6 +79,10 @@ func init() {
 func loadNetConf(bytes []byte) (*NetConf, string, error) {
 	n := &NetConf{
 		BrName: defaultBrName,
+		OVS: OVS{
+			IsMaster:  false,
+			OVSBrName: defaultOVSBrName,
+		},
 	}
 	if err := json.Unmarshal(bytes, n); err != nil {
 		return nil, "", fmt.Errorf("failed to load netconf: %v", err)
@@ -330,7 +340,7 @@ func setupBridge(n *NetConf) (*netlink.Bridge, *current.Interface, error) {
 
 func setupOVSBridge(n *NetConf) (*netlink.Bridge, error) {
 	// create ovs bridge
-	ovsbr, err := ensureOVSBridge(n.OVSBrName)
+	ovsbr, err := ensureOVSBridge(n.OVS.OVSBrName)
 	if err != nil {
 		return nil, err
 	}
@@ -339,18 +349,18 @@ func setupOVSBridge(n *NetConf) (*netlink.Bridge, error) {
 }
 
 func setupVTEPs(n *NetConf) error {
-	for i := 0; i < len(n.VtepIPs); i++ {
+	for i := 0; i < len(n.OVS.VtepIPs); i++ {
 
 		// Create interface name for VTEP
-		intfName := vxlanIfName(n.VtepIPs[i])
+		intfName := vxlanIfName(n.OVS.VtepIPs[i])
 
 		// Check if it already exists
-		isPresent, vsifName := ovsDriver.IsVtepPresent(n.VtepIPs[i])
+		isPresent, vsifName := ovsDriver.IsVtepPresent(n.OVS.VtepIPs[i])
 		if !isPresent || (vsifName != intfName) {
 			// create VTEP
-			err := ovsDriver.CreateVtep(intfName, n.VtepIPs[i])
+			err := ovsDriver.CreateVtep(intfName, n.OVS.VtepIPs[i])
 
-			log.Infof("Creating VTEP intf %s for IP %s", intfName, n.VtepIPs[i])
+			log.Infof("Creating VTEP intf %s for IP %s", intfName, n.OVS.VtepIPs[i])
 
 			if err != nil {
 				log.Errorf("Error creating VTEP port %s. Err: %v", intfName, err)
@@ -364,14 +374,14 @@ func setupVTEPs(n *NetConf) error {
 }
 
 func addOVSBridgeToBridge(n *NetConf, br *netlink.Bridge) error {
-	ovsbrLink, err := netlink.LinkByName(n.OVSBrName)
+	ovsbrLink, err := netlink.LinkByName(n.OVS.OVSBrName)
 	if err != nil {
-		fmt.Printf("could not lookup link on addOVSBridgeToBridge %q: %v", n.OVSBrName, err)
+		fmt.Printf("could not lookup link on addOVSBridgeToBridge %q: %v", n.OVS.OVSBrName, err)
 		return err
 	}
 
 	// Adding the interface into the bridge is done by setting its master to bridge_name
-	// exec.Command("brctl", "addif", n.BrName, n.OVSBrName).Output()
+	// exec.Command("brctl", "addif", n.BrName, n.OVS.OVSBrName).Output()
 	netlink.LinkSetMaster(ovsbrLink, br)
 	// if err := netlink.LinkSetMaster(ovsbrLink, br); err != nil {
 	// 	fmt.Printf("failed to LinkSetMaster %v\n", err)

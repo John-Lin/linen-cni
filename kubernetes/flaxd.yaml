@@ -1,0 +1,50 @@
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: node-reader
+rules:
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["get", "watch", "list"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: read-nodes
+subjects:
+- kind: User
+  name: system:serviceaccount:default:default
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: node-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: flaxd
+  name: kube-flax-ds
+  namespace: default
+spec:
+  template:
+    metadata:
+      labels:
+        app: flaxd
+    spec:
+      containers:
+        - name: flaxd
+          image: linton/flaxd
+          volumeMounts:
+            - name: ovsdbsock
+              mountPath: /var/run/openvswitch/db.sock
+            - name: netconf
+              mountPath: /etc/cni/net.d/linen.conf
+      volumes:
+        - hostPath:
+           path: /var/run/openvswitch/db.sock
+          name: ovsdbsock
+        - hostPath:
+           path: /etc/cni/net.d/linen.conf
+          name: netconf
