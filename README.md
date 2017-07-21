@@ -134,5 +134,5 @@ For **Open vSwitch Bridge plugin** options
 ## Usage in Kubernetes
 1. Create Linen CNI configuration file in the `/etc/cni/net.d/linen-cni.conf` directories.
 2. Make sure that the linen binary are in the `/opt/cni/bin` directories directories.
-3. Create a daemon set to manager ovsdb.
+3. Create a daemon set to manager ovsdb `kubectl create -f flaxd.yaml`.
 3. Test to create a POD/Deployment.
