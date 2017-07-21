@@ -35,11 +35,11 @@ $ tee /etc/cni/net.d/linen-cni.conf <<-'EOF'
 	"ipMasq": true,
 	"mtu": 1400,
 	"hairpinMode": false,
-    "ovs": {
-        "isMaster": true,
-        "ovsBridge": "br0",
-        "vtepIPs": ["10.245.2.2", "10.245.2.3"]
-    },
+	"ovs": {
+            "isMaster": true,
+            "ovsBridge": "br0",
+            "vtepIPs": ["10.245.2.2", "10.245.2.3"]
+        },
 	"ipam": {
 		"type": "host-local",
 		"subnet": "10.244.0.0/16",
@@ -65,10 +65,10 @@ $ tee /etc/cni/net.d/linen-cni.conf <<-'EOF'
 	"mtu": 1400,
 	"hairpinMode": false,
 	"ovs": {
-        "isMaster": true,
-        "ovsBridge": "br0",
-        "vtepIPs": ["10.245.2.2"]
-    },
+            "isMaster": true,
+            "ovsBridge": "br0",
+            "vtepIPs": ["10.245.2.2"]
+        },
 	"ipam": {
 		"type": "host-local",
 		"subnet": "10.244.0.0/16",
@@ -94,10 +94,10 @@ $ tee /etc/cni/net.d/linen-cni.conf <<-'EOF'
 	"mtu": 1400,
 	"hairpinMode": false,
 	"ovs": {
-		"isMaster": true,
-        "ovsBridge": "br0",
-        "vtepIPs": ["10.245.2.3"]
-    },
+	    "isMaster": true,
+            "ovsBridge": "br0",
+            "vtepIPs": ["10.245.2.3"]
+        },
 	"ipam": {
 		"type": "host-local",
 		"subnet": "10.244.0.0/16",
