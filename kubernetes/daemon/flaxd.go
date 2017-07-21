@@ -50,15 +50,6 @@ func vxlanIfName(vtepIP string) string {
 	return fmt.Sprintf("vxif%s", strings.Replace(vtepIP, ".", "_", -1))
 }
 
-func IPInSlice(ip string, NodeIPs []string) bool {
-	for _, i := range NodeIPs {
-		if i == ip {
-			return true
-		}
-	}
-	return false
-}
-
 func setupVTEP(ip string) error {
 	// Create interface name for VTEP
 	intfName := vxlanIfName(ip)
@@ -102,8 +93,6 @@ func main() {
 		}
 	}
 
-	var NodeIPs []string
-
 	// creates the in-cluster config
 	config, err := rest.InClusterConfig()
 	if err != nil {
@@ -119,32 +108,21 @@ func main() {
 	// create a ovs bridge
 	ovsDriver = ovsdbDriver.NewOvsDriverWithUnix(netConf.OVS.OVSBrName)
 
-	nodes, err := clientset.CoreV1().Nodes().List(metav1.ListOptions{})
-	for i := 0; i < len(nodes.Items); i++ {
-		// fmt.Printf("Initially added nodes %s in to cluster\n", nodes.Items[i].Status.Addresses[0].Address)
-		NodeIPs = append(NodeIPs, nodes.Items[i].Status.Addresses[0].Address)
-	}
-
-	// monitor
+	// monitoring
 	for {
-		nodes, err = clientset.CoreV1().Nodes().List(metav1.ListOptions{})
+		nodes, err := clientset.CoreV1().Nodes().List(metav1.ListOptions{})
 		if err != nil {
 			panic(err.Error())
 		}
 
-		// fmt.Printf("There are %d nodes in the cluster\n", len(nodes.Items))
-
 		for i := 0; i < len(nodes.Items); i++ {
-			if !IPInSlice(nodes.Items[i].Status.Addresses[0].Address, NodeIPs) {
-				if err = setupVTEP(nodes.Items[i].Status.Addresses[0].Address); err != nil {
-					log.Errorf("Error creating VTEP port")
-				}
+			log.Infof("Added nodes %s in to cluster\n", nodes.Items[i].Status.Addresses[0].Address)
 
-				NodeIPs = append(NodeIPs, nodes.Items[i].Status.Addresses[0].Address)
-				log.Infof("Added nodes %s in to cluster\n", nodes.Items[i].Status.Addresses[0].Address)
+			if err = setupVTEP(nodes.Items[i].Status.Addresses[0].Address); err != nil {
+				log.Errorf("Error creating VTEP port")
 			}
+
 		}
-		// fmt.Printf("Current nodes %v\n", NodeIPs)
 
 		time.Sleep(10 * time.Second)
 	}
