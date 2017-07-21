@@ -127,10 +127,12 @@ For **Linux Bridge plugin** options
 - `ipam` (dictionary, required): IPAM configuration to be used for this network.
 
 For **Open vSwitch Bridge plugin** options
+- `isMaster`(boolean, optional): Sets isMaster to true the host is the Kubernetes master node in cluster. Defaults to false.
 - `ovsBridge`(string, required): name of the ovs bridge to use/create.
 - `vtepIPs` (array, optional): array of the VXLAN tunnel end point IP addresses
 
 ## Usage in Kubernetes
 1. Create Linen CNI configuration file in the `/etc/cni/net.d/linen-cni.conf` directories.
 2. Make sure that the linen binary are in the `/opt/cni/bin` directories directories.
-3. Test to create a POD/Deployment
+3. Create a daemon set to manager ovsdb.
+3. Test to create a POD/Deployment.
