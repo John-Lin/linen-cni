@@ -9,7 +9,11 @@ This CNI plugin implementation was inspired by the document from [Kubernetes OVS
 
 Please read [CNI](https://github.com/containernetworking/cni/blob/master/SPEC.md) for more detail on container networking.
 
-## Architecture
+## Management Workflow in Kubernetes
+
+![Linen Workflow](/images/mgmt-workflow.png)
+
+## Packet Processing in Kubernetes
 
 ![OVS Networking](/images/ovs-networking.png)
 
