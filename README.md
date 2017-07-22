@@ -9,25 +9,39 @@ This CNI plugin implementation was inspired by the document from [Kubernetes OVS
 
 Please read [CNI](https://github.com/containernetworking/cni/blob/master/SPEC.md) for more detail on container networking.
 
-## Management Workflow in Kubernetes
+## Prerequisite
+
+```
+$ sudo apt-get install openvswitch-switch
+```
+
+# Kubernetes
+Linen CNI is not only a plugin which support for network namespace (e.g., docker, ip-netns), but also a option for Kubernetes cluster networking.
+
+## Usage
+1. Create Linen CNI configuration file in the `/etc/cni/net.d/linen-cni.conf` directories.
+2. Make sure that the linen binary are in the `/opt/cni/bin` directories directories.
+3. Create a daemon set to manager ovsdb `kubectl create -f flaxd.yaml`.
+3. Test to create a POD/Deployment.
+
+## Architecture
+
+### Management Workflow
+
+- `flax daemon`: Runs on each host in order to monitor new node join and manipulate ovsdb.
+- `linen-cni`: Executed by the container runtime and set up the network stack for containers.
 
 <p align="center">
    <img src="/images/mgmt-workflow.png" width="541" />
 </p>
 
-## Packet Processing in Kubernetes
+### Packet Processing
+
+To provide overlay network, Linen utilize Open vSwitch to create VXLAN tunneling in the backend.
 
 <p align="center">
    <img src="/images/ovs-networking.png" width="586" />
 </p>
-
-## Build
-
-```
-$ ./build.sh
-```
-
-when build succeed binary will be in the `bin` folder.
 
 ## Example network configuration
 Given the following network configurations for Node1(Master), Node2 and Node3:
@@ -46,7 +60,8 @@ $ tee /etc/cni/net.d/linen-cni.conf <<-'EOF'
 	"ovs": {
             "isMaster": true,
             "ovsBridge": "br0",
-            "vtepIPs": ["10.245.2.2", "10.245.2.3"]
+            "vtepIPs": ["10.245.2.2", "10.245.2.3"],
+            "controller": "192.168.2.100:6653"
         },
 	"ipam": {
 		"type": "host-local",
@@ -75,7 +90,8 @@ $ tee /etc/cni/net.d/linen-cni.conf <<-'EOF'
 	"ovs": {
             "isMaster": true,
             "ovsBridge": "br0",
-            "vtepIPs": ["10.245.2.2"]
+            "vtepIPs": ["10.245.2.2"],
+            "controller": "192.168.2.100:6653"
         },
 	"ipam": {
 		"type": "host-local",
@@ -102,9 +118,10 @@ $ tee /etc/cni/net.d/linen-cni.conf <<-'EOF'
 	"mtu": 1400,
 	"hairpinMode": false,
 	"ovs": {
-	    "isMaster": true,
+            "isMaster": true,
             "ovsBridge": "br0",
-            "vtepIPs": ["10.245.2.3"]
+            "vtepIPs": ["10.245.2.2"],
+            "controller": "192.168.2.100:6653"
         },
 	"ipam": {
 		"type": "host-local",
@@ -140,8 +157,17 @@ For **Open vSwitch Bridge plugin** options
 - `vtepIPs` (array, optional): array of the VXLAN tunnel end point IP addresses
 - `controller` (string, optional): Sets SDN controller, assigns an IP address and port number like `192.168.100.20:6653`.
 
-## Usage in Kubernetes
-1. Create Linen CNI configuration file in the `/etc/cni/net.d/linen-cni.conf` directories.
-2. Make sure that the linen binary are in the `/opt/cni/bin` directories directories.
-3. Create a daemon set to manager ovsdb `kubectl create -f flaxd.yaml`.
-3. Test to create a POD/Deployment.
+## Build
+You may need to build the binary from source. The "build-essential" package is required.
+
+```
+$ sudo apt-get install build-essential
+```
+
+Execute `build.sh`
+
+```
+$ ./build.sh
+```
+
+When build succeed, binary will be in the `bin` folder.
