@@ -11,11 +11,15 @@ Please read [CNI](https://github.com/containernetworking/cni/blob/master/SPEC.md
 
 ## Management Workflow in Kubernetes
 
-![Linen Workflow](/images/mgmt-workflow.png)
+<p align="center">
+   <img src="/images/mgmt-workflow.png" width="541" />
+</p>
 
 ## Packet Processing in Kubernetes
 
-![OVS Networking](/images/ovs-networking.png)
+<p align="center">
+   <img src="/images/ovs-networking.png" width="586" />
+</p>
 
 ## Build
 
