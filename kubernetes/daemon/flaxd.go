@@ -19,12 +19,15 @@ import (
 
 var ovsDriver *ovsdbDriver.OvsDriver
 
+// OVS corresponds to Open vSwitch Bridge plugin options
 type OVS struct {
-	IsMaster  bool     `json:"isMaster"`
-	OVSBrName string   `json:"ovsBridge"`
-	VtepIPs   []string `json:"vtepIPs"`
+	IsMaster   bool     `json:"isMaster"`
+	OVSBrName  string   `json:"ovsBridge"`
+	VtepIPs    []string `json:"vtepIPs"`
+	Controller string   `json:"controller,omitempty"`
 }
 
+// NetConf corresponds to Linux Bridge plugin options
 type NetConf struct {
 	types.NetConf
 	BrName       string `json:"bridge"`

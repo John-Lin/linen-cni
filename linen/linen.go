@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"net"
 	"runtime"
+	"strconv"
 	"syscall"
 
 	"io/ioutil"
@@ -43,12 +44,15 @@ import (
 const defaultBrName = "kbr0"
 const defaultOVSBrName = "br0"
 
+// OVS corresponds to Open vSwitch Bridge plugin options
 type OVS struct {
-	IsMaster  bool     `json:"isMaster"`
-	OVSBrName string   `json:"ovsBridge"`
-	VtepIPs   []string `json:"vtepIPs"`
+	IsMaster   bool     `json:"isMaster"`
+	OVSBrName  string   `json:"ovsBridge"`
+	VtepIPs    []string `json:"vtepIPs"`
+	Controller string   `json:"controller,omitempty"`
 }
 
+// NetConf corresponds to Linux Bridge plugin options
 type NetConf struct {
 	types.NetConf
 	BrName       string `json:"bridge"`
@@ -265,7 +269,7 @@ func ensureOVSBridge(OVSBrName string) (*netlink.Bridge, error) {
 	// ovsbr, _ := netlink.LinkByName(OVSBrName)
 	ovsbrLink, err := netlink.LinkByName(OVSBrName)
 	if err != nil {
-		fmt.Printf("could not lookup link on ensureOVSBridge %q: %v", OVSBrName, err)
+		log.Errorf("could not lookup link on ensureOVSBridge %q: %v", OVSBrName, err)
 		return nil, err
 	}
 
@@ -338,6 +342,30 @@ func setupBridge(n *NetConf) (*netlink.Bridge, *current.Interface, error) {
 	}, nil
 }
 
+func setupCtrlerToOVS(n *NetConf) error {
+	// setup SDN controller for ovs bridge
+	host, port, err := net.SplitHostPort(n.OVS.Controller)
+	if err != nil {
+		log.Errorf("Invalid controller IP and port. Err: %v", err)
+		return err
+	}
+
+	uPort, err := strconv.ParseUint(port, 10, 32)
+	if err != nil {
+		log.Errorf("Invalid controller port number. Err: %v", err)
+		return err
+	}
+
+	err = ovsDriver.AddController(host, uint16(uPort))
+	if err != nil {
+		log.Fatalf("Error adding controller to OVS. Err: %v", err)
+		return err
+	}
+
+	log.Infof("Connecting to SDN controller at %s", n.OVS.Controller)
+	return nil
+}
+
 func setupOVSBridge(n *NetConf) (*netlink.Bridge, error) {
 	// create ovs bridge
 	ovsbr, err := ensureOVSBridge(n.OVS.OVSBrName)
@@ -376,7 +404,7 @@ func setupVTEPs(n *NetConf) error {
 func addOVSBridgeToBridge(n *NetConf, br *netlink.Bridge) error {
 	ovsbrLink, err := netlink.LinkByName(n.OVS.OVSBrName)
 	if err != nil {
-		fmt.Printf("could not lookup link on addOVSBridgeToBridge %q: %v", n.OVS.OVSBrName, err)
+		log.Errorf("could not lookup link on addOVSBridgeToBridge %q: %v", n.OVS.OVSBrName, err)
 		return err
 	}
 
@@ -384,7 +412,7 @@ func addOVSBridgeToBridge(n *NetConf, br *netlink.Bridge) error {
 	// exec.Command("brctl", "addif", n.BrName, n.OVS.OVSBrName).Output()
 	netlink.LinkSetMaster(ovsbrLink, br)
 	// if err := netlink.LinkSetMaster(ovsbrLink, br); err != nil {
-	// 	fmt.Printf("failed to LinkSetMaster %v\n", err)
+	// 	log.Errorf("failed to LinkSetMaster %v\n", err)
 	// 	return nil, err
 	// }
 	return nil
@@ -430,6 +458,12 @@ func cmdAdd(args *skel.CmdArgs) error {
 
 	if err = setupVTEPs(n); err != nil {
 		return err
+	}
+
+	if n.OVS.Controller != "" {
+		if err = setupCtrlerToOVS(n); err != nil {
+			return err
+		}
 	}
 
 	netns, err := ns.GetNS(args.Netns)

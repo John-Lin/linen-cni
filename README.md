@@ -134,6 +134,7 @@ For **Open vSwitch Bridge plugin** options
 - `isMaster`(boolean, optional): Sets isMaster to true the host is the Kubernetes master node in cluster. Defaults to false.
 - `ovsBridge`(string, required): name of the ovs bridge to use/create.
 - `vtepIPs` (array, optional): array of the VXLAN tunnel end point IP addresses
+- `controller` (string, optional): Sets SDN controller, assigns an IP address and port number like `192.168.100.20:6653`.
 
 ## Usage in Kubernetes
 1. Create Linen CNI configuration file in the `/etc/cni/net.d/linen-cni.conf` directories.
