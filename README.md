@@ -20,7 +20,7 @@ Linen CNI is not only a plugin which support for network namespace (e.g., docker
 
 ## Usage
 1. Create Linen CNI configuration file in the `/etc/cni/net.d/linen-cni.conf` directories.
-2. Make sure that the linen binary are in the `/opt/cni/bin` directories directories.
+2. Make sure that the `linen` and `host-local` binaries are in the `/opt/cni/bin` directories directories.
 3. Create a daemon set to manager ovsdb `kubectl create -f flaxd.yaml`.
 3. Test to create a POD/Deployment.
 
@@ -32,7 +32,7 @@ Linen CNI is not only a plugin which support for network namespace (e.g., docker
 - `linen-cni`: Executed by the container runtime and set up the network stack for containers.
 
 <p align="center">
-   <img src="/images/mgmt-workflow.png" width="541" />
+    <img src="/images/mgmt-workflow.png" width="541" />
 </p>
 
 ### Packet Processing
@@ -40,7 +40,7 @@ Linen CNI is not only a plugin which support for network namespace (e.g., docker
 To provide overlay network, Linen utilize Open vSwitch to create VXLAN tunneling in the backend.
 
 <p align="center">
-   <img src="/images/ovs-networking.png" width="586" />
+    <img src="/images/ovs-networking.png" width="586" />
 </p>
 
 ## Example network configuration
