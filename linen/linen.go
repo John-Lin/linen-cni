@@ -269,8 +269,7 @@ func ensureOVSBridge(OVSBrName string) (*netlink.Bridge, error) {
 	// ovsbr, _ := netlink.LinkByName(OVSBrName)
 	ovsbrLink, err := netlink.LinkByName(OVSBrName)
 	if err != nil {
-		log.Errorf("could not lookup link on ensureOVSBridge %q: %v", OVSBrName, err)
-		return nil, err
+		return nil, fmt.Errorf("could not lookup link on ensureOVSBridge %q: %v", OVSBrName, err)
 	}
 
 	// enables the link device
@@ -345,20 +344,17 @@ func setupCtrlerToOVS(n *NetConf) error {
 	// setup SDN controller for ovs bridge
 	host, port, err := net.SplitHostPort(n.OVS.Controller)
 	if err != nil {
-		log.Errorf("Invalid controller IP and port. Err: %v", err)
-		return err
+		return fmt.Errorf("Invalid controller IP and port. Err: %v", err)
 	}
 
 	uPort, err := strconv.ParseUint(port, 10, 32)
 	if err != nil {
-		log.Errorf("Invalid controller port number. Err: %v", err)
-		return err
+		return fmt.Errorf("Invalid controller port number. Err: %v", err)
 	}
 
 	err = ovsDriver.AddController(host, uint16(uPort))
 	if err != nil {
-		log.Fatalf("Error adding controller to OVS. Err: %v", err)
-		return err
+		return fmt.Errorf("Error adding controller to OVS. Err: %v", err)
 	}
 
 	log.Infof("Connecting to SDN controller at %s", n.OVS.Controller)
@@ -387,8 +383,7 @@ func setupVTEPs(n *NetConf) error {
 			// create VTEP
 			err := ovsDriver.CreateVtep(intfName, n.OVS.VtepIPs[i])
 			if err != nil {
-				log.Errorf("Error creating VTEP port %s. Err: %v", intfName, err)
-				return err
+				return fmt.Errorf("Error creating VTEP port %s. Err: %v", intfName, err)
 			}
 			log.Infof("Creating VTEP intf %s for IP %s", intfName, n.OVS.VtepIPs[i])
 		}
@@ -401,15 +396,13 @@ func setupVTEPs(n *NetConf) error {
 func addOVSBridgeToBridge(n *NetConf, br *netlink.Bridge) error {
 	ovsbrLink, err := netlink.LinkByName(n.OVS.OVSBrName)
 	if err != nil {
-		log.Errorf("could not lookup link on addOVSBridgeToBridge %q: %v", n.OVS.OVSBrName, err)
-		return err
+		return fmt.Errorf("could not lookup link on addOVSBridgeToBridge %q: %v", n.OVS.OVSBrName, err)
 	}
 
 	// Adding the interface into the bridge is done by setting its master to bridge_name()
 	// netlink.LinkSetMaster(ovsbrLink, br)
 	if err := netlink.LinkSetMaster(ovsbrLink, br); err != nil {
-		log.Errorf("failed to LinkSetMaster %v\n", err)
-		return err
+		return fmt.Errorf("failed to LinkSetMaster %v\n", err)
 	}
 	return nil
 }
