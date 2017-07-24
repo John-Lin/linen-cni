@@ -274,10 +274,9 @@ func ensureOVSBridge(OVSBrName string) (*netlink.Bridge, error) {
 	}
 
 	// enables the link device
-	netlink.LinkSetUp(ovsbrLink)
-	// if err := netlink.LinkSetUp(ovsbr); err != nil {
-	// 	return err
-	// }
+	if err := netlink.LinkSetUp(ovsbrLink); err != nil {
+		return nil, err
+	}
 
 	ovsbr, _ := bridgeByName(OVSBrName)
 
@@ -387,13 +386,11 @@ func setupVTEPs(n *NetConf) error {
 		if !isPresent || (vsifName != intfName) {
 			// create VTEP
 			err := ovsDriver.CreateVtep(intfName, n.OVS.VtepIPs[i])
-
-			log.Infof("Creating VTEP intf %s for IP %s", intfName, n.OVS.VtepIPs[i])
-
 			if err != nil {
 				log.Errorf("Error creating VTEP port %s. Err: %v", intfName, err)
 				return err
 			}
+			log.Infof("Creating VTEP intf %s for IP %s", intfName, n.OVS.VtepIPs[i])
 		}
 
 	}
@@ -408,13 +405,12 @@ func addOVSBridgeToBridge(n *NetConf, br *netlink.Bridge) error {
 		return err
 	}
 
-	// Adding the interface into the bridge is done by setting its master to bridge_name
-	// exec.Command("brctl", "addif", n.BrName, n.OVS.OVSBrName).Output()
-	netlink.LinkSetMaster(ovsbrLink, br)
-	// if err := netlink.LinkSetMaster(ovsbrLink, br); err != nil {
-	// 	log.Errorf("failed to LinkSetMaster %v\n", err)
-	// 	return nil, err
-	// }
+	// Adding the interface into the bridge is done by setting its master to bridge_name()
+	// netlink.LinkSetMaster(ovsbrLink, br)
+	if err := netlink.LinkSetMaster(ovsbrLink, br); err != nil {
+		log.Errorf("failed to LinkSetMaster %v\n", err)
+		return err
+	}
 	return nil
 }
 
