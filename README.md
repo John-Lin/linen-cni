@@ -3,7 +3,7 @@
 A CNI plugin designed for overlay networks with [Open vSwitch](http://openvswitch.org).
 
 ## About Linen CNI plugin
-Linen provides a convenient way to easily setup networking between pods across nodes. To support multi-host overlay networking and large scale isolatio, VXLAN tunnel end point (VTEP) is used instead of GRE. Linen creates an OVS bridge and added as a port to the linux bridge.
+Linen provides a convenient way to easily setup networking between pods across nodes. To support multi-host overlay networking and large scale isolatio, VxLAN tunnel end point (VTEP) is used instead of GRE. Linen creates an OVS bridge and added as a port to the linux bridge.
 
 This CNI plugin implementation was inspired by the document from [Kubernetes OVS networking](https://kubernetes.io/docs/admin/ovs-networking/) and designed to meet the requirements of SDN environment.
 
@@ -37,7 +37,7 @@ Linen CNI is not only a plugin which support for network namespace (e.g., docker
 
 ### Packet Processing
 
-To provide overlay network, Linen utilize Open vSwitch to create VXLAN tunneling in the backend.
+To provide overlay network, Linen utilize Open vSwitch to create VxLAN tunneling in the backend.
 
 <p align="center">
     <img src="/images/ovs-networking.png" width="586" />
@@ -142,7 +142,7 @@ EOF
 For **Linux Bridge plugin** options
 - `name` (string, required): the name of the network.
 - `type` (string, required): "bridge".
-- `bridge` (string, optional): name of the bridge to use/create. Defaults to "cni0".
+- `bridge` (string, optional): name of the bridge to use/create. Defaults to "kbr0".
 - `isGateway` (boolean, optional): assign an IP address to the bridge. Defaults to false.
 - `isDefaultGateway` (boolean, optional): Sets isGateway to true and makes the assigned IP the default route. Defaults to false.
 - `forceAddress` (boolean, optional): Indicates if a new IP address should be set if the previous value has been changed. Defaults to false.
@@ -150,12 +150,13 @@ For **Linux Bridge plugin** options
 - `mtu` (integer, optional): explicitly set MTU to the specified value. Defaults to the value chosen by the kernel.
 - `hairpinMode` (boolean, optional): set hairpin mode for interfaces on the bridge. Defaults to false.
 - `ipam` (dictionary, required): IPAM configuration to be used for this network.
+- `promiscMode` (boolean, optional): set promiscuous mode on the bridge. Defaults to false.
 
 For **Open vSwitch Bridge plugin** options
-- `isMaster`(boolean, optional): Sets isMaster to true the host is the Kubernetes master node in cluster. Defaults to false.
+- `isMaster`(boolean, optional): sets isMaster to true if the host is the Kubernetes master node in cluster. Defaults to false.
 - `ovsBridge`(string, required): name of the ovs bridge to use/create.
-- `vtepIPs` (array, optional): array of the VXLAN tunnel end point IP addresses
-- `controller` (string, optional): Sets SDN controller, assigns an IP address and port number like `192.168.100.20:6653`.
+- `vtepIPs` (slice, optional): slice of the VxLAN tunnel end point IP addresses.
+- `controller` (string, optional): sets SDN controller, assigns an IP address and port number like `192.168.100.20:6653`.
 
 ## Build
 You may need to build the binary from source. The "build-essential" package is required.
