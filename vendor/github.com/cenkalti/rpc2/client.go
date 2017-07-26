@@ -26,6 +26,7 @@ type Client struct {
 	handlers   map[string]*handler
 	disconnect chan struct{}
 	State      *State // additional information to associate with client
+	blocking   bool   // whether to block request handling
 }
 
 // NewClient returns a new Client to handle requests to the
@@ -46,6 +47,13 @@ func NewClientWithCodec(codec Codec) *Client {
 		disconnect: make(chan struct{}),
 		seq:        1, // 0 means notification.
 	}
+}
+
+// SetBlocking puts the client in blocking mode.
+// In blocking mode, received requests are processes synchronously.
+// If you have methods that may take a long time, other subsequent reqeusts may time out.
+func (c *Client) SetBlocking(blocking bool) {
+	c.blocking = true
 }
 
 // Run the client's read loop.
@@ -116,6 +124,30 @@ func (c *Client) readLoop() {
 	close(c.disconnect)
 }
 
+func (c *Client) handleRequest(req Request, method *handler, argv reflect.Value) {
+	// Invoke the method, providing a new value for the reply.
+	replyv := reflect.New(method.replyType.Elem())
+
+	returnValues := method.fn.Call([]reflect.Value{reflect.ValueOf(c), argv, replyv})
+
+	// Do not send response if request is a notification.
+	if req.Seq == 0 {
+		return
+	}
+
+	// The return value for the method is an error.
+	errInter := returnValues[0].Interface()
+	errmsg := ""
+	if errInter != nil {
+		errmsg = errInter.(error).Error()
+	}
+	resp := &Response{
+		Seq:   req.Seq,
+		Error: errmsg,
+	}
+	c.codec.WriteResponse(resp, replyv.Interface())
+}
+
 func (c *Client) readRequest(req *Request) error {
 	method, ok := c.handlers[req.Method]
 	if !ok {
@@ -143,30 +175,11 @@ func (c *Client) readRequest(req *Request) error {
 		argv = argv.Elem()
 	}
 
-	// Invoke the method, providing a new value for the reply.
-	replyv := reflect.New(method.replyType.Elem())
-
-	// Call handler function.
-	go func(req Request) {
-		returnValues := method.fn.Call([]reflect.Value{reflect.ValueOf(c), argv, replyv})
-
-		// Do not send response if request is a notification.
-		if req.Seq == 0 {
-			return
-		}
-
-		// The return value for the method is an error.
-		errInter := returnValues[0].Interface()
-		errmsg := ""
-		if errInter != nil {
-			errmsg = errInter.(error).Error()
-		}
-		resp := &Response{
-			Seq:   req.Seq,
-			Error: errmsg,
-		}
-		c.codec.WriteResponse(resp, replyv.Interface())
-	}(*req)
+	if c.blocking {
+		c.handleRequest(*req, method, argv)
+	} else {
+		go c.handleRequest(*req, method, argv)
+	}
 
 	return nil
 }
@@ -273,6 +286,7 @@ func (e ServerError) Error() string {
 	return string(e)
 }
 
+// ErrShutdown is returned when the connection is closing or closed.
 var ErrShutdown = errors.New("connection is shut down")
 
 // Call represents an active RPC.
@@ -317,6 +331,7 @@ func (c *Client) send(call *Call) {
 	}
 }
 
+// Notify sends a request to the receiver but does not wait for a return value.
 func (c *Client) Notify(method string, args interface{}) error {
 	c.sending.Lock()
 	defer c.sending.Unlock()

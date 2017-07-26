@@ -80,7 +80,7 @@ func NewOvsDriver(bridgeName string, ipAddr string, port int) *OvsDriver {
 // Create a new OVS driver with Unix socket
 func NewOvsDriverWithUnix(bridgeName string) *OvsDriver {
 	ovsDriver := new(OvsDriver)
-	
+
 	// connect over a Unix socket:
 	// deafult socket file path "/var/run/openvswitch/db.sock"
 	ovs, err := libovsdb.ConnectUnix("")
