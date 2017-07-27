@@ -10,12 +10,24 @@ This library is a fork of the ovsdbDriver functionality in [contiv/ofnet](https:
 $ go get -u github.com/John-Lin/ovsdbDriver
 ```
 
-## Usage
+## Usage with ovsdb-server
 
-Please make sure that you have set OVSDB listener
+You might need to create OVS bridge on given IP and TCP port, please make sure that you have set OVSDB listener.
 
 ```
 $ ovs-vsctl set-manager ptcp:6640
+```
+
+Create bridge should assign IP and TCP port.
+
+```go
+ovsDriver = ovsdbDriver.NewOvsDriver("ovsbr", "127.0.0.1", 6640)
+```
+
+Otherwise, `ovsdb-server` connects to the Unix domain server socket and the default path is `unix:/var/run/openvswitch/db.sock` .
+
+```go
+ovsDriver = ovsDriver = NewOvsDriverWithUnix("br0")
 ```
 
 ## Example
@@ -27,8 +39,12 @@ import "github.com/John-Lin/ovsdbDriver"
 var ovsDriver *ovsdbDriver.OvsDriver
 
 func main() {
-    // Create an OVS bridge
-    ovsDriver = ovsdbDriver.NewOvsDriver("ovsbr", "127.0.0.1", 6640)
+    // Create an OVS bridge to the Unix domain server socket.
+    ovsDriver = NewOvsDriverWithUnix("br0")
+    
+    // Create an OVS bridge to the given IP and TCP port.
+    // ovsDriver = ovsdbDriver.NewOvsDriver("ovsbr", "127.0.0.1", 6640)
+    
     // Add ovsbr as a internal port without vlan tag (0)
     ovsDriver.CreatePort("ovsbr", "internal", 0)
 }

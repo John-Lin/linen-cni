@@ -1,0 +1,155 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "CfwQ0xasAvikgjGSua9jIfd9Kr0=",
+			"path": "github.com/John-Lin/ovsdbDriver",
+			"revision": "d0f7b8386c1ad64e7be2f26d7fa5f4819f51253b",
+			"revisionTime": "2017-07-24T08:25:40Z"
+		},
+		{
+			"checksumSHA1": "jZvENk75KntUialBY6N6n3/YoJo=",
+			"path": "github.com/Sirupsen/logrus",
+			"revision": "3114d6f6170e481339142c3a80f4fbbbdec09e8f",
+			"revisionTime": "2017-07-26T08:09:27Z"
+		},
+		{
+			"checksumSHA1": "72zRy5zCQvI87HDwbIfwhfOBXew=",
+			"path": "github.com/cenkalti/hub",
+			"revision": "11382a9960d39b0ecda16fd01c424c11ff765a34",
+			"revisionTime": "2016-05-27T10:32:12Z"
+		},
+		{
+			"checksumSHA1": "xoOkcixbl+i6kkiHvXMNcN0/zJ0=",
+			"path": "github.com/cenkalti/rpc2",
+			"revision": "c51a77e5f664b4a8a69bce4270d14204f94d51f9",
+			"revisionTime": "2017-07-26T07:05:24Z"
+		},
+		{
+			"checksumSHA1": "SV8XkMo9habP+09CWxEKm7ojrOA=",
+			"path": "github.com/cenkalti/rpc2/jsonrpc",
+			"revision": "c51a77e5f664b4a8a69bce4270d14204f94d51f9",
+			"revisionTime": "2017-07-26T07:05:24Z"
+		},
+		{
+			"checksumSHA1": "Kh/msV2XTuYy0UB63hhoKcKfkyY=",
+			"path": "github.com/containernetworking/cni/pkg/invoke",
+			"revision": "b69e640cc0e2b2be0e3544f28aff7466e64c8422",
+			"revisionTime": "2017-07-12T15:03:31Z"
+		},
+		{
+			"checksumSHA1": "LvjTFR2Am01kquJNDnfISncPfRw=",
+			"path": "github.com/containernetworking/cni/pkg/skel",
+			"revision": "a2da8f8d7fd8e6dc25f336408a8ac86f050fbd88",
+			"revisionTime": "2017-07-05T15:32:19Z",
+			"version": "=v0.6.0-rc1",
+			"versionExact": "v0.6.0-rc1"
+		},
+		{
+			"checksumSHA1": "Sfdjk2zzDd0npAjZdULWjWoKVkQ=",
+			"path": "github.com/containernetworking/cni/pkg/types",
+			"revision": "a2da8f8d7fd8e6dc25f336408a8ac86f050fbd88",
+			"revisionTime": "2017-07-05T15:32:19Z",
+			"version": "=v0.6.0-rc1",
+			"versionExact": "v0.6.0-rc1"
+		},
+		{
+			"checksumSHA1": "lmLYXYR/twmBu+6U678QNF+BQlQ=",
+			"path": "github.com/containernetworking/cni/pkg/types/020",
+			"revision": "b69e640cc0e2b2be0e3544f28aff7466e64c8422",
+			"revisionTime": "2017-07-12T15:03:31Z"
+		},
+		{
+			"checksumSHA1": "r6qX7lyz4pweijiXjWMcxvm4wQQ=",
+			"path": "github.com/containernetworking/cni/pkg/types/current",
+			"revision": "a2da8f8d7fd8e6dc25f336408a8ac86f050fbd88",
+			"revisionTime": "2017-07-05T15:32:19Z",
+			"version": "=v0.6.0-rc1",
+			"versionExact": "v0.6.0-rc1"
+		},
+		{
+			"checksumSHA1": "Y9KLxL9fFDnFHaDGOUfDkcbyV0U=",
+			"path": "github.com/containernetworking/cni/pkg/version",
+			"revision": "a2da8f8d7fd8e6dc25f336408a8ac86f050fbd88",
+			"revisionTime": "2017-07-05T15:32:19Z",
+			"version": "=v0.6.0-rc1",
+			"versionExact": "v0.6.0-rc1"
+		},
+		{
+			"checksumSHA1": "BUj+UEIzHmUAfGD4c/srsQJ4TY8=",
+			"path": "github.com/containernetworking/plugins/pkg/ip",
+			"revision": "a714098daf75b8ed7dbbaa054f6ae7c13b9727f3",
+			"revisionTime": "2017-07-12T15:30:00Z",
+			"version": "=v0.6.0-rc1",
+			"versionExact": "v0.6.0-rc1"
+		},
+		{
+			"checksumSHA1": "kR8rb+saRyrxv5KqGcw4urd5Ugs=",
+			"path": "github.com/containernetworking/plugins/pkg/ipam",
+			"revision": "a714098daf75b8ed7dbbaa054f6ae7c13b9727f3",
+			"revisionTime": "2017-07-12T15:30:00Z",
+			"version": "=v0.6.0-rc1",
+			"versionExact": "v0.6.0-rc1"
+		},
+		{
+			"checksumSHA1": "wmZ5nRpAN/myLfAzVpPR1RxnoFQ=",
+			"path": "github.com/containernetworking/plugins/pkg/ns",
+			"revision": "a714098daf75b8ed7dbbaa054f6ae7c13b9727f3",
+			"revisionTime": "2017-07-12T15:30:00Z",
+			"version": "=v0.6.0-rc1",
+			"versionExact": "v0.6.0-rc1"
+		},
+		{
+			"checksumSHA1": "909B5R5pbQLe7y6cgMlr8d0aLO0=",
+			"path": "github.com/containernetworking/plugins/pkg/utils",
+			"revision": "a714098daf75b8ed7dbbaa054f6ae7c13b9727f3",
+			"revisionTime": "2017-07-12T15:30:00Z",
+			"version": "=v0.6.0-rc1",
+			"versionExact": "v0.6.0-rc1"
+		},
+		{
+			"checksumSHA1": "rUAk+nce6eDIWtYo/QYIoqlTfrY=",
+			"path": "github.com/containernetworking/plugins/pkg/utils/hwaddr",
+			"revision": "20bc33abc565e75c0f9de488a020d1ef5b7d9b56",
+			"revisionTime": "2017-07-21T18:48:06Z"
+		},
+		{
+			"checksumSHA1": "H1rA7yOjCtSwGqnC0ujfGPv3FVQ=",
+			"path": "github.com/contiv/libovsdb",
+			"revision": "bbc744d8ddc88c6a997e600b19736055c24d87d5",
+			"revisionTime": "2016-04-06T17:49:30Z"
+		},
+		{
+			"checksumSHA1": "8R+CXppdizJ1Pt+FpoL79hMQJWA=",
+			"path": "github.com/coreos/go-iptables/iptables",
+			"revision": "259c8e6a4275d497442c721fa52204d7a58bde8b",
+			"revisionTime": "2017-06-29T13:55:19Z"
+		},
+		{
+			"checksumSHA1": "CtbDusmFaGQ8eEVWg1XhgRW0+/Y=",
+			"path": "github.com/vishvananda/netlink",
+			"revision": "8d7f7aad193e778023f06a843a26ffc9615ca840",
+			"revisionTime": "2017-07-18T23:18:00Z"
+		},
+		{
+			"checksumSHA1": "VCg/PEPYvGfReiDbzG+goZjbqGs=",
+			"path": "github.com/vishvananda/netlink/nl",
+			"revision": "8d7f7aad193e778023f06a843a26ffc9615ca840",
+			"revisionTime": "2017-07-18T23:18:00Z"
+		},
+		{
+			"checksumSHA1": "YDN9yoXZ/KBWqILw9PCNtd/SRAI=",
+			"path": "github.com/vishvananda/netns",
+			"revision": "86bef332bfc3b59b7624a600bd53009ce91a9829",
+			"revisionTime": "2017-07-07T00:42:18Z"
+		},
+		{
+			"checksumSHA1": "3h7O5ut4va7qUnw70cdlf2bvjjE=",
+			"path": "golang.org/x/sys/unix",
+			"revision": "14ac33bf8474b62c65cae263af2e4d3b543cc699",
+			"revisionTime": "2017-07-25T14:33:55Z"
+		}
+	],
+	"rootPath": "github.com/John-Lin/linen-cni"
+}
