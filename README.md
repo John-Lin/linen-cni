@@ -10,10 +10,17 @@ This CNI plugin implementation was inspired by the document from [Kubernetes OVS
 Please read [CNI](https://github.com/containernetworking/cni/blob/master/SPEC.md) for more detail on container networking.
 
 ## Prerequisite
-
 ```
 $ sudo apt-get install openvswitch-switch
 ```
+
+# Should I use this or ovn-kubernetes?
+ovn-kubernetes provides more advanced features and use vRouter (Layer 3 approach) to achieve multi-host networking. 
+If you're going to create vRouters and vSwitches to build any network topologies you desire, ovn-kubernetes is a complete solution. 
+
+This CNI plugin creates only vSwitches in each node and uses VxLAN for achieving network overlay.
+For the PODs in cluster are managed by linux bridges and the IP allocation is configured through `IPAM` plugin.
+
 
 # Kubernetes
 Linen CNI is not only a plugin which support for network namespace (e.g., docker, ip-netns), but also a option for Kubernetes cluster networking.
