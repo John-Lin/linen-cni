@@ -23,6 +23,8 @@ For the PODs in cluster are managed by linux bridges and the IP allocation is co
 
 
 # Kubernetes
+**Kubernetes 1.7+ and CNI 0.6.0-rc1 are required**.
+
 Linen CNI is not only a plugin which support for network namespace (e.g., docker, ip-netns), but also a option for Kubernetes cluster networking.
 
 ## Usage
