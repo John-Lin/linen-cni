@@ -26,8 +26,8 @@ For the PODs in cluster are managed by linux bridges and the IP allocation is co
 Linen CNI is not only a plugin which support for network namespace (e.g., docker, ip-netns), but also a option for Kubernetes cluster networking.
 
 ## Usage
-1. Create Linen CNI configuration file in the `/etc/cni/net.d/linen-cni.conf` directories.
-2. Make sure that the `linen` and `host-local` binaries are in the `/opt/cni/bin` directories directories.
+1. Create a Linen CNI configuration list file in the `/etc/cni/net.d/linen.conflist` directories.
+2. Make sure that the `linen`, `bridge` and `host-local` binaries are in the `/opt/cni/bin` directories directories.
 3. Create a daemon set to manager ovsdb `kubectl create -f flaxd.yaml`.
 3. Test to create a POD/Deployment.
 
