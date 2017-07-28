@@ -25,6 +25,7 @@ import (
 )
 
 const defaultOVSBrName = "br0"
+const defaultBrName = "cni0"
 
 // OVS corresponds to Open vSwitch Bridge plugin options
 type OVS struct {
@@ -70,10 +71,9 @@ func parseConfig(stdin []byte) (*LinenConf, error) {
 		}
 	}
 
-	// Do any validation here
-	// if conf.AnotherAwesomeArg == "" {
-	// 	return nil, fmt.Errorf("anotherAwesomeArg must be specified")
-	// }
+	if conf.RuntimeConfig.OVS.BrName == "" {
+		conf.RuntimeConfig.OVS.BrName = defaultBrName
+	}
 
 	if conf.RuntimeConfig.OVS.OVSBrName == "" {
 		conf.RuntimeConfig.OVS.OVSBrName = defaultOVSBrName
@@ -84,7 +84,6 @@ func parseConfig(stdin []byte) (*LinenConf, error) {
 // cmdAdd is called for ADD requests
 func cmdAdd(args *skel.CmdArgs) error {
 	netConf, err := parseConfig(args.StdinData)
-	log.Infof(string(netConf))
 
 	if err != nil {
 		return err
@@ -94,26 +93,26 @@ func cmdAdd(args *skel.CmdArgs) error {
 		return fmt.Errorf("must be called as chained plugin")
 	}
 
-	// FIXME
-	// if reflect.DeepEqual(netConf.RuntimeConfig.OVS, (OVS{})) {
-	// 	return types.PrintResult(netConf.PrevResult, netConf.CNIVersion)
-	// }
-
-	// Open vSwitch
+	// Create a Open vSwitch bridge
 	_, err = setupOVSBridge(netConf)
 	if err != nil {
 		return err
 	}
 
+	// Add Open vSwitch bridge to linux bridge
 	if err = addOVSBridgeToBridge(netConf); err != nil {
 		return err
 	}
 
-	if err = setupVTEPs(netConf); err != nil {
-		return err
+	if len(netConf.RuntimeConfig.OVS.VtepIPs) != 0 {
+		// Create VxLAN tunnelings
+		if err = setupVTEPs(netConf); err != nil {
+			return err
+		}
 	}
 
 	if netConf.RuntimeConfig.OVS.Controller != "" {
+		// Set SDN controller
 		if err = setupCtrlerToOVS(netConf); err != nil {
 			return err
 		}
