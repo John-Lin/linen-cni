@@ -51,105 +51,15 @@ To provide overlay network, Linen utilize Open vSwitch to create VxLAN tunneling
 </p>
 
 ## Example network configuration
-Given the following network configurations for Node1(Master), Node2 and Node3:
-```
-$ tee /etc/cni/net.d/linen-cni.conf <<-'EOF'
-{
-	"name": "linen-demo-network",
-	"type": "linen",
-	"bridge": "kbr0",
-	"isGateway": true,
-	"isDefaultGateway": true,
-	"forceAddress": false,
-	"ipMasq": true,
-	"mtu": 1400,
-	"hairpinMode": false,
-	"ovs": {
-            "isMaster": true,
-            "ovsBridge": "br0",
-            "vtepIPs": ["10.245.2.2", "10.245.2.3"],
-            "controller": "192.168.2.100:6653"
-        },
-	"ipam": {
-		"type": "host-local",
-		"subnet": "10.244.0.0/16",
-		"rangeStart": "10.244.1.10",
-		"rangeEnd": "10.244.1.150",
-		"routes": [
-			{ "dst": "0.0.0.0/0" }
-		],
-		"gateway": "10.244.1.1"
-	}
-}
-EOF
+Please check example network configuration in the `examples` folder
 
-$ tee /etc/cni/net.d/linen-cni.conf <<-'EOF'
-{
-	"name": "linen-demo-network",
-	"type": "linen",
-	"bridge": "kbr0",
-	"isGateway": true,
-	"isDefaultGateway": true,
-	"forceAddress": false,
-	"ipMasq": true,
-	"mtu": 1400,
-	"hairpinMode": false,
-	"ovs": {
-            "isMaster": true,
-            "ovsBridge": "br0",
-            "vtepIPs": ["10.245.2.2"],
-            "controller": "192.168.2.100:6653"
-        },
-	"ipam": {
-		"type": "host-local",
-		"subnet": "10.244.0.0/16",
-		"rangeStart": "10.244.2.10",
-		"rangeEnd": "10.244.2.150",
-		"routes": [
-			{ "dst": "0.0.0.0/0" }
-		],
-		"gateway": "10.244.2.1"
-	}
-}
-EOF
-
-$ tee /etc/cni/net.d/linen-cni.conf <<-'EOF'
-{
-	"name": "linen-demo-network",
-	"type": "linen",
-	"bridge": "kbr0",
-	"isGateway": true,
-	"isDefaultGateway": true,
-	"forceAddress": false,
-	"ipMasq": true,
-	"mtu": 1400,
-	"hairpinMode": false,
-	"ovs": {
-            "isMaster": true,
-            "ovsBridge": "br0",
-            "vtepIPs": ["10.245.2.2"],
-            "controller": "192.168.2.100:6653"
-        },
-	"ipam": {
-		"type": "host-local",
-		"subnet": "10.244.0.0/16",
-		"rangeStart": "10.244.3.10",
-		"rangeEnd": "10.244.3.150",
-		"routes": [
-			{ "dst": "0.0.0.0/0" }
-		],
-		"gateway": "10.244.3.1"
-	}
-}
-EOF
-```
 
 ### Network configuration reference
 
 For **Linux Bridge plugin** options
 - `name` (string, required): the name of the network.
 - `type` (string, required): "bridge".
-- `bridge` (string, optional): name of the bridge to use/create. Defaults to "kbr0".
+- `bridge` (string, optional): name of the bridge to use/create. Defaults to "cni0".
 - `isGateway` (boolean, optional): assign an IP address to the bridge. Defaults to false.
 - `isDefaultGateway` (boolean, optional): Sets isGateway to true and makes the assigned IP the default route. Defaults to false.
 - `forceAddress` (boolean, optional): Indicates if a new IP address should be set if the previous value has been changed. Defaults to false.
@@ -161,6 +71,7 @@ For **Linux Bridge plugin** options
 
 For **Open vSwitch Bridge plugin** options
 - `isMaster`(boolean, optional): sets isMaster to true if the host is the Kubernetes master node in cluster. Defaults to false.
+- `bridge` (string, optional): name of the bridge to connect to ovs bridge. Defaults to "cni0".
 - `ovsBridge`(string, required): name of the ovs bridge to use/create.
 - `vtepIPs` (slice, optional): slice of the VxLAN tunnel end point IP addresses.
 - `controller` (string, optional): sets SDN controller, assigns an IP address and port number like `192.168.100.20:6653`.

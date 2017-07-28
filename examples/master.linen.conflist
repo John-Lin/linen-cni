@@ -1,0 +1,43 @@
+{
+   "name":"linen-network",
+   "cniVersion": "0.3.1",
+   "plugins":[
+      {
+         "type":"bridge",
+         "bridge":"kbr0",
+         "isGateway":true,
+         "isDefaultGateway":true,
+         "forceAddress":false,
+         "ipMasq":true,
+         "mtu":1400,
+         "hairpinMode":false,
+         "ipam":{
+            "type":"host-local",
+            "subnet":"10.244.0.0/16",
+            "rangeStart":"10.244.1.10",
+            "rangeEnd":"10.244.1.150",
+            "routes":[
+               {
+                  "dst":"0.0.0.0/0"
+               }
+            ],
+            "gateway":"10.244.1.1"
+         }
+      },
+      {
+         "type":"linen",
+         "runtimeConfig":{
+            "ovs":{
+               "isMaster":true,
+               "bridge":"kbr0",               
+               "ovsBridge":"br0",
+               "vtepIPs":[
+                  "10.245.2.2",
+                  "10.245.2.3"
+               ],
+               "controller":"192.168.2.100:6653"
+            }
+         }
+      }
+   ]
+}
