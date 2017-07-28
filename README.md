@@ -28,14 +28,14 @@ Linen CNI is not only a plugin which support for network namespace (e.g., docker
 ## Usage
 1. Create a Linen CNI configuration list file in the `/etc/cni/net.d/linen.conflist` directories.
 2. Make sure that the `linen`, `bridge` and `host-local` binaries are in the `/opt/cni/bin` directories directories.
-3. Create a daemon set to manager ovsdb `kubectl create -f flaxd.yaml`.
+3. (Optional) Create a daemon set to manager ovsdb `kubectl create -f flaxd.yaml`.
 3. Test to create a POD/Deployment.
 
 ## Architecture
 
 ### Management Workflow
 
-- `flax daemon`: Runs on each host in order to monitor new node join and manipulate ovsdb.
+- `flax daemon`: Runs on each host in order to monitor new node join and add it to current overlay network.
 - `linen-cni`: Executed by the container runtime and set up the network stack for containers.
 
 <p align="center">
@@ -72,9 +72,9 @@ For **Linux Bridge plugin** options
 For **Open vSwitch Bridge plugin** options
 - `isMaster`(boolean, optional): sets isMaster to true if the host is the Kubernetes master node in cluster. Defaults to false.
 - `bridge` (string, optional): name of the bridge to connect to ovs bridge. Defaults to "cni0".
-- `ovsBridge`(string, required): name of the ovs bridge to use/create.
-- `vtepIPs` (slice, optional): slice of the VxLAN tunnel end point IP addresses.
-- `controller` (string, optional): sets SDN controller, assigns an IP address and port number like `192.168.100.20:6653`.
+- `ovsBridge`(string, optional): name of the ovs bridge to use/create.
+- `vtepIPs` (list, optional): list of the VxLAN tunnel end point IP addresses.
+- `controller` (string, optional): sets SDN controller, assigns an IP address, port number like `192.168.100.20:6653`. Controller is not not essential for overlay network. 
 
 ## Build
 You may need to build the binary from source. The "build-essential" package is required.
