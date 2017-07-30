@@ -58,7 +58,9 @@ Please check example network configuration in the `examples` folder
 
 ### Network configuration reference
 
-For **Linux Bridge plugin** options
+Linen is a chained plugin. It always comes after `bridge` plugin, so configure Linux Bridge is needed.
+
+For the **Linux Bridge plugin** options
 - `name` (string, required): the name of the network.
 - `type` (string, required): "bridge".
 - `bridge` (string, optional): name of the bridge to use/create. Defaults to "cni0".
@@ -71,9 +73,8 @@ For **Linux Bridge plugin** options
 - `ipam` (dictionary, required): IPAM configuration to be used for this network.
 - `promiscMode` (boolean, optional): set promiscuous mode on the bridge. Defaults to false.
 
-For **Open vSwitch Bridge plugin** options
+For the **Open vSwitch Bridge plugin** options
 - `isMaster`(boolean, optional): sets isMaster to true if the host is the Kubernetes master node in cluster. Defaults to false.
-- `bridge` (string, optional): name of the bridge to connect to ovs bridge. Defaults to "cni0".
 - `ovsBridge`(string, optional): name of the ovs bridge to use/create.
 - `vtepIPs` (list, optional): list of the VxLAN tunnel end point IP addresses.
 - `controller` (string, optional): sets SDN controller, assigns an IP address, port number like `192.168.100.20:6653`. Controller is not not essential for overlay network. 

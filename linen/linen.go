@@ -25,13 +25,11 @@ import (
 )
 
 const defaultOVSBrName = "br0"
-const defaultBrName = "cni0"
 
 // OVS corresponds to Open vSwitch Bridge plugin options
 type OVS struct {
 	IsMaster   bool     `json:"isMaster"`
 	OVSBrName  string   `json:"ovsBridge"`
-	BrName     string   `json:"bridge"`
 	VtepIPs    []string `json:"vtepIPs"`
 	Controller string   `json:"controller,omitempty"`
 }
@@ -71,10 +69,7 @@ func parseConfig(stdin []byte) (*LinenConf, error) {
 		}
 	}
 
-	if conf.RuntimeConfig.OVS.BrName == "" {
-		conf.RuntimeConfig.OVS.BrName = defaultBrName
-	}
-
+	// if not give ovs bridge name, set to default br0
 	if conf.RuntimeConfig.OVS.OVSBrName == "" {
 		conf.RuntimeConfig.OVS.OVSBrName = defaultOVSBrName
 	}

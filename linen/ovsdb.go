@@ -98,9 +98,8 @@ func addOVSBridgeToBridge(config *LinenConf) error {
 	if err != nil {
 		return fmt.Errorf("could not lookup link on addOVSBridgeToBridge %q: %v", config.RuntimeConfig.OVS.OVSBrName, err)
 	}
-
-	// br, err := bridgeByName(netConf.RuntimeConfig.OVS.PrevResult)
-	br, err := bridgeByName(config.RuntimeConfig.OVS.BrName)
+	// The first element for Interfaces is brInterface
+	br, err := bridgeByName(config.PrevResult.Interfaces[0].Name)
 	if err != nil {
 		return err
 	}
