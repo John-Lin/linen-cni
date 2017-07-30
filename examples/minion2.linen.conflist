@@ -29,7 +29,6 @@
          "runtimeConfig":{
             "ovs":{
                "isMaster":false,
-               "bridge":"kbr0",
                "ovsBridge":"br0",
                "vtepIPs":[
                   "10.245.2.2"
