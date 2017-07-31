@@ -15,6 +15,7 @@ import (
 	"github.com/John-Lin/ovsdbDriver"
 	log "github.com/Sirupsen/logrus"
 	"github.com/containernetworking/cni/pkg/types"
+	"github.com/containernetworking/cni/pkg/types/current"
 )
 
 var ovsDriver *ovsdbDriver.OvsDriver
@@ -27,23 +28,28 @@ type OVS struct {
 	Controller string   `json:"controller,omitempty"`
 }
 
-// NetConf corresponds to Linux Bridge plugin options
-type NetConf struct {
-	types.NetConf
-	BrName       string `json:"bridge"`
-	IsGW         bool   `json:"isGateway"`
-	IsDefaultGW  bool   `json:"isDefaultGateway"`
-	ForceAddress bool   `json:"forceAddress"`
-	IPMasq       bool   `json:"ipMasq"`
-	MTU          int    `json:"mtu"`
-	HairpinMode  bool   `json:"hairpinMode"`
-	OVS          OVS    `json:"ovs"`
+type LinenConf struct {
+	types.NetConf // You may wish to not nest this type
+	RuntimeConfig struct {
+		OVS OVS `json:"ovs"`
+	} `json:"runtimeConfig"`
+
+	RawPrevResult *map[string]interface{} `json:"prevResult"`
+	PrevResult    *current.Result         `json:"-"`
 }
 
-func loadNetConf(bytes []byte) (*NetConf, error) {
-	n := &NetConf{}
+// NetConfList describes an ordered list of networks.
+type NetConfList struct {
+	CNIVersion string `json:"cniVersion,omitempty"`
+
+	Name    string       `json:"name,omitempty"`
+	Plugins []*LinenConf `json:"plugins,omitempty"`
+}
+
+func loadNetConf(bytes []byte) (*NetConfList, error) {
+	n := &NetConfList{}
 	if err := json.Unmarshal(bytes, n); err != nil {
-		return nil, fmt.Errorf("failed to load netconf: %v", err)
+		return nil, fmt.Errorf("failed to load network configuration: %v", err)
 	}
 	return n, nil
 }
@@ -74,7 +80,7 @@ func setupVTEP(ip string) error {
 }
 
 func main() {
-	raw, e := ioutil.ReadFile("/etc/cni/net.d/linen.conf")
+	raw, e := ioutil.ReadFile("/etc/cni/net.d/linen.conflist")
 	if e != nil {
 		log.Errorf("Read file error: %v\n", e)
 		os.Exit(1)
@@ -86,7 +92,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	if netConf.OVS.IsMaster {
+	if netConf.Plugins[1].RuntimeConfig.OVS.IsMaster {
 		log.Infof("Daemon running in master")
 	} else {
 		// Daemon not runs on central node, keep in idle state.
@@ -109,7 +115,7 @@ func main() {
 	}
 
 	// create a ovs bridge
-	ovsDriver = ovsdbDriver.NewOvsDriverWithUnix(netConf.OVS.OVSBrName)
+	ovsDriver = ovsdbDriver.NewOvsDriverWithUnix(netConf.Plugins[1].RuntimeConfig.OVS.OVSBrName)
 
 	// monitoring
 	for {

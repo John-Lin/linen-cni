@@ -40,11 +40,11 @@ spec:
             - name: ovsdbsock
               mountPath: /var/run/openvswitch/db.sock
             - name: netconf
-              mountPath: /etc/cni/net.d/linen.conf
+              mountPath: /etc/cni/net.d/linen.conflist
       volumes:
         - hostPath:
            path: /var/run/openvswitch/db.sock
           name: ovsdbsock
         - hostPath:
-           path: /etc/cni/net.d/linen.conf
+           path: /etc/cni/net.d/linen.conflist
           name: netconf
