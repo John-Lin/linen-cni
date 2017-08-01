@@ -20,16 +20,16 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/John-Lin/ovsdbDriver"
+	"github.com/John-Lin/ovsdb"
 	"github.com/vishvananda/netlink"
 )
 
-var ovsDriver *ovsdbDriver.OvsDriver
+var ovsDriver *ovsdb.OvsDriver
 
 func ensureOVSBridge(OVSBrName string) (*netlink.Bridge, error) {
 
 	// create a ovs bridge
-	ovsDriver = ovsdbDriver.NewOvsDriverWithUnix(OVSBrName)
+	ovsDriver = ovsdb.NewOvsDriverWithUnix(OVSBrName)
 
 	// Create an internal port in OVS
 	ovsDriver.CreatePort(OVSBrName, "internal", 0)
