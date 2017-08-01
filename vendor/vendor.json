@@ -3,10 +3,10 @@
 	"ignore": "test",
 	"package": [
 		{
-			"checksumSHA1": "CfwQ0xasAvikgjGSua9jIfd9Kr0=",
-			"path": "github.com/John-Lin/ovsdbDriver",
-			"revision": "d0f7b8386c1ad64e7be2f26d7fa5f4819f51253b",
-			"revisionTime": "2017-07-24T08:25:40Z"
+			"checksumSHA1": "Ynx8RCkLp1XtsxVS31JSO8FAZHY=",
+			"path": "github.com/John-Lin/ovsdb",
+			"revision": "671b35f38c9c59181cd4bb93c3be8d4fa21cd800",
+			"revisionTime": "2017-08-01T15:43:48Z"
 		},
 		{
 			"checksumSHA1": "jZvENk75KntUialBY6N6n3/YoJo=",

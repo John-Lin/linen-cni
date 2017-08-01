@@ -1,13 +1,13 @@
-ovsdbDriver
+ovsdb
 ====
 A libovsdb wrapper for operating [Open vSwitch](http://openvswitch.org/) via Go.
 
-This library is a fork of the ovsdbDriver functionality in [contiv/ofnet](https://github.com/contiv/ofnet).
+This library is a fork of the ovsdbDriver functionality in [contiv/ofnet](https://github.com/contiv/ofnet) and makes modifications for supporting Unix domain socket to connect OVSDB.
 
 ## Install 
 
 ```
-$ go get -u github.com/John-Lin/ovsdbDriver
+$ go get -u github.com/John-Lin/ovsdb
 ```
 
 ## Usage with ovsdb-server
@@ -21,32 +21,32 @@ $ ovs-vsctl set-manager ptcp:6640
 Create bridge should assign IP and TCP port.
 
 ```go
-ovsDriver = ovsdbDriver.NewOvsDriver("ovsbr", "127.0.0.1", 6640)
+ovsDriver = ovsdb.NewOvsDriver("ovsbr", "127.0.0.1", 6640)
 ```
 
 Otherwise, `ovsdb-server` connects to the Unix domain server socket and the default path is `unix:/var/run/openvswitch/db.sock` .
 
 ```go
-ovsDriver = ovsDriver = NewOvsDriverWithUnix("br0")
+ovsDriver = ovsdb.NewOvsDriverWithUnix("br0")
 ```
 
 ## Example
 ```go
 package main
 
-import "github.com/John-Lin/ovsdbDriver"
+import "github.com/John-Lin/ovsdb"
 
-var ovsDriver *ovsdbDriver.OvsDriver
+var ovsDriver *ovsdb.OvsDriver
 
 func main() {
     // Create an OVS bridge to the Unix domain server socket.
-    ovsDriver = NewOvsDriverWithUnix("br0")
-    
+    ovsDriver = ovsdb.NewOvsDriverWithUnix("br0")
+
     // Create an OVS bridge to the given IP and TCP port.
-    // ovsDriver = ovsdbDriver.NewOvsDriver("ovsbr", "127.0.0.1", 6640)
-    
-    // Add ovsbr as a internal port without vlan tag (0)
-    ovsDriver.CreatePort("ovsbr", "internal", 0)
+    // ovsDriver = ovsdb.NewOvsDriver("br0", "127.0.0.1", 6640)
+
+    // Add br0 as a internal port without vlan tag (0)
+    ovsDriver.CreatePort("br0", "internal", 0)
 }
 ```
 
@@ -54,16 +54,16 @@ Use `ovs-vsctl show` to check bridge information.
 
 ```
 root@dev:~# ovs-vsctl show
-e650c132-8c99-44b4-aa50-c640645f4f18
-    Manager "ptcp:6640"
-    Bridge "ovsbr"
-        Port "ovsbr"
-            Interface "ovsbr"
+82040598-7050-4320-b946-1d4380fabc73
+    Bridge "br0"
+        Port "br0"
+            Interface "br0"
                 type: internal
     ovs_version: "2.5.2"
 ```
 
 ## Related
 - [libovsdb](https://github.com/socketplane/libovsdb) is an OVSDB library which is originally developed by SocketPlane.
+- [contiv/ofnet](https://github.com/contiv/ofnet) is openflow networking library.
 
 
