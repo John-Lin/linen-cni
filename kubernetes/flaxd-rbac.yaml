@@ -1,0 +1,26 @@
+# Create the clusterrole and clusterrolebinding:
+# $ kubectl create -f flaxd-rbac.yml
+# Create the pod using the same namespace used by the flax serviceaccount:
+# $ kubectl create --namespace kube-system -f flaxd.yml
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: flax
+rules:
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["get", "watch", "list"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: flax
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: flax
+subjects:
+- kind: ServiceAccount
+  name: flax
+  namespace: kube-system
