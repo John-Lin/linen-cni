@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: ryu-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ryu
+    spec:
+      hostNetwork: true
+      containers:
+      - name: ryu
+        image: osrg/ryu
+        args:
+          - ryu-manager
+          - ./ryu/ryu/app/simple_switch_13.py
+        ports:
+        - containerPort: 6653
+          name: openflow
+      nodeSelector:
+        nodetype: master
