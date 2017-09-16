@@ -21,8 +21,8 @@ import (
 	"sync"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/contiv/libovsdb"
+	log "github.com/sirupsen/logrus"
 )
 
 // OVS driver state
@@ -32,6 +32,12 @@ type OvsDriver struct {
 
 	// Name of the OVS bridge
 	OvsBridgeName string
+
+	// Controller Failure Settings
+	failMode string
+
+	// Spanning Tree Protocol
+	stpEnable bool
 
 	// OVSDB cache
 	ovsdbCache map[string]map[string]libovsdb.Row
@@ -67,6 +73,8 @@ func NewOvsDriver(bridgeName string, ipAddr string, port int) *OvsDriver {
 	// Setup state
 	ovsDriver.ovsClient = ovs
 	ovsDriver.OvsBridgeName = bridgeName
+	ovsDriver.failMode = "standalone"
+	ovsDriver.stpEnable = true
 	ovsDriver.ovsdbCache = make(map[string]map[string]libovsdb.Row)
 
 	go func() {
@@ -82,7 +90,7 @@ func NewOvsDriver(bridgeName string, ipAddr string, port int) *OvsDriver {
 	time.Sleep(1 * time.Second)
 
 	// Create the default bridge instance
-	err = ovsDriver.CreateBridge(ovsDriver.OvsBridgeName)
+	err = ovsDriver.CreateBridge(ovsDriver.OvsBridgeName, ovsDriver.failMode, ovsDriver.stpEnable)
 	if err != nil {
 		log.Fatalf("Error creating the default bridge. Err: %v", err)
 	}
@@ -93,11 +101,14 @@ func NewOvsDriver(bridgeName string, ipAddr string, port int) *OvsDriver {
 
 // Create a new OVS driver with Unix socket
 func NewOvsDriverWithUnix(bridgeName string) *OvsDriver {
+	var sockPath string
 	ovsDriver := new(OvsDriver)
 
 	// connect over a Unix socket:
+	// Try to grep ovsdb-server socket file path
 	// deafult socket file path "/var/run/openvswitch/db.sock"
-	ovs, err := libovsdb.ConnectUnix("")
+	sockPath = ovsdbUnixPath()
+	ovs, err := libovsdb.ConnectUnix(sockPath)
 	if err != nil {
 		log.Fatal("Failed to connect to ovsdb")
 	}
@@ -105,6 +116,8 @@ func NewOvsDriverWithUnix(bridgeName string) *OvsDriver {
 	// Setup state
 	ovsDriver.ovsClient = ovs
 	ovsDriver.OvsBridgeName = bridgeName
+	ovsDriver.failMode = "standalone"
+	ovsDriver.stpEnable = true
 	ovsDriver.ovsdbCache = make(map[string]map[string]libovsdb.Row)
 
 	go func() {
@@ -120,7 +133,7 @@ func NewOvsDriverWithUnix(bridgeName string) *OvsDriver {
 	time.Sleep(1 * time.Second)
 
 	// Create the default bridge instance
-	err = ovsDriver.CreateBridge(ovsDriver.OvsBridgeName)
+	err = ovsDriver.CreateBridge(ovsDriver.OvsBridgeName, ovsDriver.failMode, ovsDriver.stpEnable)
 	if err != nil {
 		log.Fatalf("Error creating the default bridge. Err: %v", err)
 	}
@@ -222,7 +235,7 @@ func (self *OvsDriver) ovsdbTransact(ops []libovsdb.Operation) error {
 }
 
 // **************** OVS driver API ********************
-func (self *OvsDriver) CreateBridge(bridgeName string) error {
+func (self *OvsDriver) CreateBridge(bridgeName string, failMode string, stp bool) error {
 	namedUuidStr := "dummy"
 	protocols := []string{"OpenFlow10", "OpenFlow11", "OpenFlow12", "OpenFlow13"}
 
@@ -237,7 +250,8 @@ func (self *OvsDriver) CreateBridge(bridgeName string) error {
 	bridge := make(map[string]interface{})
 	bridge["name"] = bridgeName
 	bridge["protocols"], _ = libovsdb.NewOvsSet(protocols)
-	// bridge["fail_mode"] = "secure"
+	bridge["fail_mode"] = failMode
+	bridge["stp_enable"] = stp
 	brOp = libovsdb.Operation{
 		Op:       "insert",
 		Table:    "Bridge",
@@ -505,10 +519,11 @@ func (self *OvsDriver) AddController(ipAddr string, portNo uint16) error {
 	ctrlerUuidStr := fmt.Sprintf("local")
 	ctrlerUuid := []libovsdb.UUID{{GoUuid: ctrlerUuidStr}}
 
+	// This can't check each individual bridge
 	// If controller already exists, nothing to do
-	if self.IsControllerPresent(ipAddr, portNo) {
-		return nil
-	}
+	// if self.IsControllerPresent(ipAddr, portNo) {
+	//	return nil
+	// }
 
 	// insert a row in Controller table
 	controller := make(map[string]interface{})

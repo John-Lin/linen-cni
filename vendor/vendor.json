@@ -3,16 +3,10 @@
 	"ignore": "test",
 	"package": [
 		{
-			"checksumSHA1": "Ynx8RCkLp1XtsxVS31JSO8FAZHY=",
+			"checksumSHA1": "OFauKrx1S0h/o/0rgvIOHAtKfv4=",
 			"path": "github.com/John-Lin/ovsdb",
-			"revision": "671b35f38c9c59181cd4bb93c3be8d4fa21cd800",
-			"revisionTime": "2017-08-01T15:43:48Z"
-		},
-		{
-			"checksumSHA1": "jZvENk75KntUialBY6N6n3/YoJo=",
-			"path": "github.com/Sirupsen/logrus",
-			"revision": "3114d6f6170e481339142c3a80f4fbbbdec09e8f",
-			"revisionTime": "2017-07-26T08:09:27Z"
+			"revision": "73372c160d4c86efee2e2faf2dd6315301406375",
+			"revisionTime": "2017-09-16T15:35:40Z"
 		},
 		{
 			"checksumSHA1": "72zRy5zCQvI87HDwbIfwhfOBXew=",
@@ -127,6 +121,12 @@
 			"revisionTime": "2017-06-29T13:55:19Z"
 		},
 		{
+			"checksumSHA1": "BYvROBsiyAXK4sq6yhDe8RgT4LM=",
+			"path": "github.com/sirupsen/logrus",
+			"revision": "89742aefa4b206dcf400792f3bd35b542998eb3b",
+			"revisionTime": "2017-08-22T13:27:46Z"
+		},
+		{
 			"checksumSHA1": "CtbDusmFaGQ8eEVWg1XhgRW0+/Y=",
 			"path": "github.com/vishvananda/netlink",
 			"revision": "8d7f7aad193e778023f06a843a26ffc9615ca840",
@@ -145,10 +145,22 @@
 			"revisionTime": "2017-07-07T00:42:18Z"
 		},
 		{
+			"checksumSHA1": "nqWNlnMmVpt628zzvyo6Yv2CX5Q=",
+			"path": "golang.org/x/crypto/ssh/terminal",
+			"revision": "b0c9c05bfe149df95eb1d25642162cca051e0466",
+			"revisionTime": "2017-09-15T01:37:37Z"
+		},
+		{
 			"checksumSHA1": "3h7O5ut4va7qUnw70cdlf2bvjjE=",
 			"path": "golang.org/x/sys/unix",
 			"revision": "14ac33bf8474b62c65cae263af2e4d3b543cc699",
 			"revisionTime": "2017-07-25T14:33:55Z"
+		},
+		{
+			"checksumSHA1": "pBPFzDGt3AVSRffB7ffiUnruFUk=",
+			"path": "golang.org/x/sys/windows",
+			"revision": "062cd7e4e68206d8bab9b18396626e855c992658",
+			"revisionTime": "2017-09-12T16:19:26Z"
 		}
 	],
 	"rootPath": "github.com/John-Lin/linen-cni"
