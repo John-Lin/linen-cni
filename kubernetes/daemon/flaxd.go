@@ -26,13 +26,13 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 
-	"github.com/John-Lin/ovsdbDriver"
-	log "github.com/Sirupsen/logrus"
+	"github.com/John-Lin/ovsdb"
 	"github.com/containernetworking/cni/pkg/types"
 	"github.com/containernetworking/cni/pkg/types/current"
+	log "github.com/sirupsen/logrus"
 )
 
-var ovsDriver *ovsdbDriver.OvsDriver
+var ovsDriver *ovsdb.OvsDriver
 
 // OVS corresponds to Open vSwitch Bridge plugin options
 type OVS struct {
@@ -129,7 +129,7 @@ func main() {
 	}
 
 	// create a ovs bridge
-	ovsDriver = ovsdbDriver.NewOvsDriverWithUnix(netConf.Plugins[1].RuntimeConfig.OVS.OVSBrName)
+	ovsDriver = ovsdb.NewOvsDriverWithUnix(netConf.Plugins[1].RuntimeConfig.OVS.OVSBrName)
 
 	// monitoring
 	for {

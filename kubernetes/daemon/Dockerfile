@@ -5,7 +5,7 @@ RUN go get -u k8s.io/apimachinery/pkg/apis/meta/v1 && \
     go get -u k8s.io/client-go/kubernetes && \
     go get -u k8s.io/client-go/rest && \
     go get -u github.com/John-Lin/ovsdbDriver && \
-    go get -u github.com/Sirupsen/logrus && \
+    go get -u github.com/sirupsen/logrus && \
     go get -u github.com/containernetworking/cni/pkg/types 
 RUN cd /src && go build -o flaxd
  
