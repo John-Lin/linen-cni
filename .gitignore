@@ -4,3 +4,4 @@ bin/
 gopath/
 .vagrant
 devenv/
+*.log
