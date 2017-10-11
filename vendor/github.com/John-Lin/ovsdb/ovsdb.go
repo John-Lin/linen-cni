@@ -21,8 +21,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/contiv/libovsdb"
 	log "github.com/sirupsen/logrus"
+	"github.com/socketplane/libovsdb"
 )
 
 // OVS driver state
@@ -108,9 +108,9 @@ func NewOvsDriverWithUnix(bridgeName string) *OvsDriver {
 	// Try to grep ovsdb-server socket file path
 	// deafult socket file path "/var/run/openvswitch/db.sock"
 	sockPath = ovsdbUnixPath()
-	ovs, err := libovsdb.ConnectUnix(sockPath)
+	ovs, err := libovsdb.ConnectWithUnixSocket(sockPath)
 	if err != nil {
-		log.Fatal("Failed to connect to ovsdb")
+		log.Fatal("Failed to connect to ovsdb", err)
 	}
 
 	// Setup state
@@ -203,7 +203,7 @@ func (self *OvsDriver) getRootUuid() libovsdb.UUID {
 
 	// find the matching uuid
 	for uuid := range self.ovsdbCache["Open_vSwitch"] {
-		return libovsdb.UUID{GoUuid: uuid}
+		return libovsdb.UUID{GoUUID: uuid}
 	}
 	return libovsdb.UUID{}
 }
@@ -261,7 +261,7 @@ func (self *OvsDriver) CreateBridge(bridgeName string, failMode string, stp bool
 
 	// Inserting/Deleting a Bridge row in Bridge table requires mutating
 	// the open_vswitch table.
-	brUuid := []libovsdb.UUID{{GoUuid: namedUuidStr}}
+	brUuid := []libovsdb.UUID{{GoUUID: namedUuidStr}}
 	mutateUuid := brUuid
 	mutateSet, _ := libovsdb.NewOvsSet(mutateUuid)
 	mutation := libovsdb.NewMutation("bridges", "insert", mutateSet)
@@ -288,7 +288,7 @@ func (self *OvsDriver) DeleteBridge(bridgeName string) error {
 	defer self.lock.RUnlock()
 
 	namedUuidStr := "dummy"
-	brUuid := []libovsdb.UUID{{GoUuid: namedUuidStr}}
+	brUuid := []libovsdb.UUID{{GoUUID: namedUuidStr}}
 
 	// simple insert/delete operation
 	brOp := libovsdb.Operation{}
@@ -303,7 +303,7 @@ func (self *OvsDriver) DeleteBridge(bridgeName string) error {
 	for uuid, row := range self.ovsdbCache["Bridge"] {
 		name := row.Fields["name"].(string)
 		if name == bridgeName {
-			brUuid = []libovsdb.UUID{{GoUuid: uuid}}
+			brUuid = []libovsdb.UUID{{GoUUID: uuid}}
 			break
 		}
 	}
@@ -331,8 +331,8 @@ func (self *OvsDriver) DeleteBridge(bridgeName string) error {
 func (self *OvsDriver) CreatePort(intfName, intfType string, vlanTag uint) error {
 	portUuidStr := intfName
 	intfUuidStr := fmt.Sprintf("Intf%s", intfName)
-	portUuid := []libovsdb.UUID{{GoUuid: portUuidStr}}
-	intfUuid := []libovsdb.UUID{{GoUuid: intfUuidStr}}
+	portUuid := []libovsdb.UUID{{GoUUID: portUuidStr}}
+	intfUuid := []libovsdb.UUID{{GoUUID: intfUuidStr}}
 	opStr := "insert"
 	var err error = nil
 
@@ -395,7 +395,7 @@ func (self *OvsDriver) DeletePort(intfName string) error {
 	defer self.lock.RUnlock()
 
 	portUuidStr := intfName
-	portUuid := []libovsdb.UUID{{GoUuid: portUuidStr}}
+	portUuid := []libovsdb.UUID{{GoUUID: portUuidStr}}
 	opStr := "delete"
 
 	// insert/delete a row in Interface table
@@ -418,7 +418,7 @@ func (self *OvsDriver) DeletePort(intfName string) error {
 	for uuid, row := range self.ovsdbCache["Port"] {
 		name := row.Fields["name"].(string)
 		if name == intfName {
-			portUuid = []libovsdb.UUID{{GoUuid: uuid}}
+			portUuid = []libovsdb.UUID{{GoUUID: uuid}}
 			break
 		}
 	}
@@ -443,8 +443,8 @@ func (self *OvsDriver) DeletePort(intfName string) error {
 func (self *OvsDriver) CreateVtep(intfName string, vtepRemoteIP string) error {
 	portUuidStr := intfName
 	intfUuidStr := fmt.Sprintf("Intf%s", intfName)
-	portUuid := []libovsdb.UUID{{GoUuid: portUuidStr}}
-	intfUuid := []libovsdb.UUID{{GoUuid: intfUuidStr}}
+	portUuid := []libovsdb.UUID{{GoUUID: portUuidStr}}
+	intfUuid := []libovsdb.UUID{{GoUUID: intfUuidStr}}
 	opStr := "insert"
 	intfType := "vxlan"
 	var err error = nil
@@ -517,7 +517,7 @@ func (self *OvsDriver) AddController(ipAddr string, portNo uint16) error {
 	// Format target string
 	target := fmt.Sprintf("tcp:%s:%d", ipAddr, portNo)
 	ctrlerUuidStr := fmt.Sprintf("local")
-	ctrlerUuid := []libovsdb.UUID{{GoUuid: ctrlerUuidStr}}
+	ctrlerUuid := []libovsdb.UUID{{GoUUID: ctrlerUuidStr}}
 
 	// This can't check each individual bridge
 	// If controller already exists, nothing to do

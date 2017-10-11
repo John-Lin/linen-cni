@@ -3,10 +3,10 @@
 	"ignore": "test",
 	"package": [
 		{
-			"checksumSHA1": "OFauKrx1S0h/o/0rgvIOHAtKfv4=",
+			"checksumSHA1": "97f3MSpIa1OZAnXBaYsL0DptWTk=",
 			"path": "github.com/John-Lin/ovsdb",
-			"revision": "73372c160d4c86efee2e2faf2dd6315301406375",
-			"revisionTime": "2017-09-16T15:35:40Z"
+			"revision": "69099a695b164686ccb87adf2cc50eebe72dfae4",
+			"revisionTime": "2017-10-10T15:26:22Z"
 		},
 		{
 			"checksumSHA1": "72zRy5zCQvI87HDwbIfwhfOBXew=",
@@ -109,12 +109,6 @@
 			"revisionTime": "2017-07-21T18:48:06Z"
 		},
 		{
-			"checksumSHA1": "H1rA7yOjCtSwGqnC0ujfGPv3FVQ=",
-			"path": "github.com/contiv/libovsdb",
-			"revision": "bbc744d8ddc88c6a997e600b19736055c24d87d5",
-			"revisionTime": "2016-04-06T17:49:30Z"
-		},
-		{
 			"checksumSHA1": "8R+CXppdizJ1Pt+FpoL79hMQJWA=",
 			"path": "github.com/coreos/go-iptables/iptables",
 			"revision": "259c8e6a4275d497442c721fa52204d7a58bde8b",
@@ -125,6 +119,12 @@
 			"path": "github.com/sirupsen/logrus",
 			"revision": "89742aefa4b206dcf400792f3bd35b542998eb3b",
 			"revisionTime": "2017-08-22T13:27:46Z"
+		},
+		{
+			"checksumSHA1": "i1IXs5Zp2VX1F8Y1KXFHcoC8R9c=",
+			"path": "github.com/socketplane/libovsdb",
+			"revision": "4de3618546deba09d8875d719752db32bd4652c0",
+			"revisionTime": "2017-01-16T17:48:20Z"
 		},
 		{
 			"checksumSHA1": "CtbDusmFaGQ8eEVWg1XhgRW0+/Y=",
