@@ -109,6 +109,7 @@ sh build.sh
 cp bin/linen ../cni/ 
 ```
 - We need to provide a CNI config for `Linen-CNI`, and you can use build-in config from example directory. Use following command to copy the config to `/root` directory.
+
 ```
 sudo cp examples/master.linen.conflist  /root/linen.conflist
 ```
@@ -116,17 +117,19 @@ sudo cp examples/master.linen.conflist  /root/linen.conflist
 ## Create NS
 In this vagrant environment, we don't install docker related services but you can use `namespace(ns)` to test `Linen-CNI`.
 Type following command to create a namespace named ns1
+
 ```
 sudo ip netns add ns1
 ```
 
 ## Start CNI
 We have setup Linen-CNI environement and some testing namespacese, we can use following command to inform CNI to add a network for namespaces.
+
 ```
 cd ~/cni
 sudo CNI_PATH=`pwd` NETCONFPATH=/root ./cnitool \ add linen-network /var/run/netns/ns1
 ```
-and you will look its result like below
+and the result looks like below
 ```
 {
     "cniVersion": "0.3.1",
@@ -161,8 +164,10 @@ and you will look its result like below
     "dns": {}
 }
 ```
-Now, we can use some tools to help us check the current network setting, for example.
-You can use `ovs-vsctl show` to show current OVS setting and you it looks like
+
+Now, we can use some tools to help us check the current network setting, for example.  
+You can use `ovs-vsctl show` to show current OVS setting and you it looks like  
+
 ```
 e6289dc2-a181-4316-b902-a50fc6d854b6
     Bridge "br0"
@@ -181,6 +186,6 @@ e6289dc2-a181-4316-b902-a50fc6d854b6
                 options: {key=flow, remote_ip="10.245.2.3"}
     ovs_version: "2.5.2"
 ```
-In this setting, the OVS will try to connect to Openflow controller (it not exist, change to L2 bridge mode) and it also contains three ports, including two vxlan ports.
-Besides, you can use `brctl show` to see that the OVS bridge (br0) is attached to Linux bridge(kbr).
-If you wan to check the namepsace's networking settingm, you can use `sudo ip netns exec ns1 ifconfig` to see its IP config.
+In this setting, the OVS will try to connect to Openflow controller (it not exist, change to L2 bridge mode) and it also contains three ports, including two vxlan ports.  
+Besides, you can use `brctl show` to see that the OVS bridge (br0) is attached to Linux bridge(kbr).  
+If you wan to check the namepsace's networking settingm, you can use `sudo ip netns exec ns1 ifconfig` to see its IP config.  
