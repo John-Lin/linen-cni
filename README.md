@@ -187,5 +187,24 @@ e6289dc2-a181-4316-b902-a50fc6d854b6
     ovs_version: "2.5.2"
 ```
 In this setting, the OVS will try to connect to Openflow controller (it not exist, change to L2 bridge mode) and it also contains three ports, including two vxlan ports.  
-Besides, you can use `brctl show` to see that the OVS bridge (br0) is attached to Linux bridge(kbr).  
-If you wan to check the namepsace's networking settingm, you can use `sudo ip netns exec ns1 ifconfig` to see its IP config.  
+
+Besides, you can use `brctl show` to see that the OVS bridge (br0) is attached to Linux bridge(kbr).
+
+```
+bridge name     bridge id               STP enabled     interfaces
+kbr0            8000.0a580af40101       no              br0
+                                                        veth7df4d2c0
+```
+
+If you wan to check the namepsace's networking settingm, you can use `sudo ip netns exec ns1 ifconfig` to see its IP config.
+```
+ubuntu@dev:~$ sudo ip netns exec ns1 ifconfig
+eth0      Link encap:Ethernet  HWaddr 0a:58:0a:f4:01:0a
+          inet addr:10.244.1.10  Bcast:0.0.0.0  Mask:255.255.0.0
+          inet6 addr: fe80::bc15:faff:fe6b:b414/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1400  Metric:1
+          RX packets:18 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:10 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:1476 (1.4 KB)  TX bytes:828 (828.0 B)
+```
