@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: onos-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: onos
+    spec:
+      hostNetwork: true
+      containers:
+      - name: onos
+        image: onosproject/onos:1.10.3
+        env:
+        - name: ONOS_APPS
+          value: "drivers,openflow,fwd,proxyarp"
+        args:
+          - start
+        ports:
+        - containerPort: 6653
+          name: openflow
+        - containerPort: 6640
+          name: ovsdb
+        - containerPort: 8181
+          name: gui
+        - containerPort: 8101
+          name: onos-cli
+        - containerPort: 9876
+          name: cluster
+      nodeSelector:
+        nodetype: master
