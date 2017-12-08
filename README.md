@@ -123,7 +123,7 @@ sudo ip netns add ns1
 ```
 
 ## Start CNI
-We have setup Linen-CNI environement and some testing namespacese, we can use following command to inform CNI to add a network for namespaces.
+We have setup Linen-CNI environement and testing namespace(ns1), we can use the following commands to inform CNI to add a network for the namespace.
 
 ```
 cd ~/cni
@@ -166,7 +166,7 @@ and the result looks like below
 ```
 
 Now, we can use some tools to help us check the current network setting, for example.  
-You can use `ovs-vsctl show` to show current OVS setting and you it looks like  
+You can use `ovs-vsctl show` to show current OVS setting and it looks like: 
 
 ```
 e6289dc2-a181-4316-b902-a50fc6d854b6
@@ -188,7 +188,7 @@ e6289dc2-a181-4316-b902-a50fc6d854b6
 ```
 In this setting, the OVS will try to connect to Openflow controller (it not exist, change to L2 bridge mode) and it also contains three ports, including two vxlan ports.  
 
-Besides, you can use `brctl show` to see that the OVS bridge (br0) is attached to Linux bridge(kbr).
+Besides, you can use `brctl show` to see that the OVS bridge (br0) has been attached to Linux bridge(kbr).
 
 ```
 bridge name     bridge id               STP enabled     interfaces
@@ -196,7 +196,7 @@ kbr0            8000.0a580af40101       no              br0
                                                         veth7df4d2c0
 ```
 
-If you wan to check the namepsace's networking settingm, you can use `sudo ip netns exec ns1 ifconfig` to see its IP config.
+If you want to check the namepsace's networking setting, you can use `sudo ip netns exec ns1 ifconfig` to see it's IP config.
 ```
 ubuntu@dev:~$ sudo ip netns exec ns1 ifconfig
 eth0      Link encap:Ethernet  HWaddr 0a:58:0a:f4:01:0a
